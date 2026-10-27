@@ -65,7 +65,7 @@ export const DecisionSchema = z
           })
           .strict(),
       )
-      .max(3),
+      .max(5),
     factorPreferences: z.array(FactorPreferenceSchema).max(20),
   })
   .strict()
