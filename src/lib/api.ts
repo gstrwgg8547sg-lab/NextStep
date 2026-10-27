@@ -22,6 +22,9 @@ async function invoke(name: string, body: unknown) {
     try {
       json = await response.json();
     } catch {
+      const ct = response.headers.get("content-type") ?? "";
+      if (ct.includes("text/html"))
+        throw new Error("服务正在部署或暂时不可用，请稍后重试。");
       throw new Error("服务返回格式异常，请检查配置并重试。");
     }
     if (json?.error)
