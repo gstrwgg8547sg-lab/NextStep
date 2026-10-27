@@ -114,14 +114,6 @@ function useDecisionStore() {
           revision: describeRevision(draft.current, valid.data),
         };
         setDraft((d) => ({ ...d, mode: "live", current }));
-        try {
-          const st = localStorage.getItem("nextstep:settings");
-          if (!st || JSON.parse(st).autoSave !== false) {
-            const next = [current, ...history.filter((h) => h.id !== current.id)].slice(0, 30);
-            writeHistory(next);
-            setHistory(next);
-          }
-        } catch { /* ignore */ }
       }
       return true;
     } catch (e) {
@@ -132,8 +124,8 @@ function useDecisionStore() {
       lock.current = false;
     }
   }
-  function saveReport() {
-    if (!draft.current) return;
+  function saveReport(): boolean {
+    if (!draft.current) return false;
     const next = [
       draft.current,
       ...history.filter((h) => h.id !== draft.current!.id),
@@ -142,8 +134,10 @@ function useDecisionStore() {
       writeHistory(next);
       setHistory(next);
       setNotice("已保存到当前浏览器的历史分析。");
+      return true;
     } catch {
       setStorageWarning("保存失败：浏览器存储不可用或空间不足。");
+      return false;
     }
   }
   function removeReport(id: string) {

@@ -4,7 +4,6 @@ import { useDecision } from "./decision-provider";
 import { Card } from "./ui/card";
 
 const PROFILE_KEY = "nextstep:profile";
-const SETTINGS_KEY = "nextstep:settings";
 
 const menuIcon: Record<string, React.ReactNode> = {
   download: (
@@ -124,7 +123,6 @@ export function ProfileScreen() {
   const [nickname, setNickname] = useState("决策小助手");
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
-  const [autoSave, setAutoSave] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [confirmClear, setConfirmClear] = useState(false);
   const [notice, setNotice] = useState("");
@@ -134,8 +132,6 @@ export function ProfileScreen() {
     try {
       const p = localStorage.getItem(PROFILE_KEY);
       if (p) setNickname(JSON.parse(p).nickname);
-      const st = localStorage.getItem(SETTINGS_KEY);
-      if (st) setAutoSave(JSON.parse(st).autoSave ?? true);
     } catch {
       /* ignore */
     }
@@ -163,14 +159,6 @@ export function ProfileScreen() {
     setEditing(false);
   };
 
-  const toggleAutoSave = (v: boolean) => {
-    setAutoSave(v);
-    try {
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ autoSave: v }));
-    } catch {
-      /* ignore */
-    }
-  };
 
   const handleExport = () => {
     try {
@@ -566,80 +554,6 @@ export function ProfileScreen() {
       >
         偏好设置
       </div>
-      <Card
-        style={{
-          padding: "14px 16px",
-          marginBottom: 18,
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          border: "1px solid var(--line)",
-        }}
-      >
-        <span
-          style={{
-            width: 34,
-            height: 34,
-            borderRadius: 10,
-            display: "grid",
-            placeItems: "center",
-            background: "var(--sage)",
-            color: "var(--forest)",
-            flexShrink: 0,
-          }}
-        >
-          <svg
-            viewBox="0 0 24 24"
-            width={18}
-            height={18}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.6}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M12 3v2M12 19v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M3 12h2M19 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
-            <circle cx="12" cy="12" r="4" />
-          </svg>
-        </span>
-        <div style={{ flex: 1 }}>
-          <div
-            style={{ fontSize: 13, fontWeight: 600, color: "var(--forest)" }}
-          >
-            自动保存分析结果
-          </div>
-          <div style={{ fontSize: 11, color: "var(--weak)", marginTop: 2 }}>
-            分析完成后自动存入历史记录
-          </div>
-        </div>
-        <button
-          onClick={() => toggleAutoSave(!autoSave)}
-          style={{
-            width: 44,
-            height: 24,
-            borderRadius: 12,
-            background: autoSave ? "var(--forest)" : "#d4d4d0",
-            position: "relative",
-            border: "none",
-            cursor: "pointer",
-            transition: "background 0.2s",
-          }}
-        >
-          <span
-            style={{
-              position: "absolute",
-              top: 2,
-              left: autoSave ? 22 : 2,
-              width: 20,
-              height: 20,
-              borderRadius: "50%",
-              background: "#fff",
-              transition: "left 0.2s",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
-            }}
-          />
-        </button>
-      </Card>
 
       <div
         style={{

@@ -1,9 +1,10 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useDecision } from "./decision-provider";
 export function ReportNavigation() {
   const path = usePathname();
+  const router = useRouter();
   const s = useDecision();
   return (
     <div className="report-navigation">
@@ -12,7 +13,12 @@ export function ReportNavigation() {
           ‹
         </Link>
         <b>决策分析报告</b>
-        <button onClick={s.saveReport} disabled={!s.draft.current || !!s.busy}>
+        <button
+          onClick={() => {
+            if (s.saveReport()) router.push("/?tab=history");
+          }}
+          disabled={!s.draft.current || !!s.busy}
+        >
           保存
         </button>
       </div>
