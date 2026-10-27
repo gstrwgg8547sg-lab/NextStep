@@ -1,0 +1,1 @@
+participant_id,date,product_version,target_scenario,tool,tool_order,model,network,independent_completion,assistance_count,parse_seconds,report_seconds,total_seconds,retry_count,cache_hit,outcome,helpfulness,key_insight,issue,followup

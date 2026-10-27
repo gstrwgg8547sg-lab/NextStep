@@ -1,0 +1,5 @@
+project_id = "nextstep"
+[functions.parse-decision]
+verify_jwt = false
+[functions.analyze-decision]
+verify_jwt = false
