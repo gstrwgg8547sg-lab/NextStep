@@ -12,6 +12,42 @@ import {
   type Decision,
 } from "./schema";
 
+/** Read a Moonshot SSE stream and return the accumulated content text. */
+async function readSseContent(body: ReadableStream<Uint8Array> | null) {
+  if (!body) throw new Error("AI_INVALID_OUTPUT");
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
+  let buf = "";
+  let content = "";
+  let finishReason: string | undefined;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += decoder.decode(value, { stream: true });
+    let idx: number;
+    while ((idx = buf.indexOf("\n\n")) >= 0) {
+      const event = buf.slice(0, idx);
+      buf = buf.slice(idx + 2);
+      for (const line of event.split("\n")) {
+        if (!line.startsWith("data:")) continue;
+        const data = line.slice(5).trim();
+        if (!data || data === "[DONE]") continue;
+        try {
+          const json = JSON.parse(data);
+          const delta = json?.choices?.[0]?.delta;
+          if (delta?.content) content += delta.content;
+          if (json?.choices?.[0]?.finish_reason)
+            finishReason = json.choices[0].finish_reason;
+        } catch {
+          // ignore malformed chunk
+        }
+      }
+    }
+  }
+  if (finishReason === "length") return "__LENGTH__";
+  return content;
+}
+
 const AI_API_KEY = process.env.AI_API_KEY;
 const AI_BASE_URL =
   (process.env.AI_BASE_URL ?? "https://api.moonshot.cn/v1").replace(/\/+$/, "");
@@ -296,7 +332,8 @@ async function runAi(kind: "parse" | "analyze", input: unknown) {
     ],
     response_format: { type: "json_object" },
     thinking: { type: "disabled" },
-    max_tokens: kind === "parse" ? 2500 : 3500,
+    max_tokens: kind === "parse" ? 2500 : 3000,
+    stream: true,
   });
 
   const perCallMs = 45000;
@@ -327,11 +364,10 @@ async function runAi(kind: "parse" | "analyze", input: unknown) {
         }
         throw new Error(`AI_HTTP_${response.status}`);
       }
-      const json = await response.json();
-      if (json?.choices?.[0]?.finish_reason === "length")
-        throw new Error("AI_OUTPUT_TRUNCATED");
-      const content = json?.choices?.[0]?.message?.content;
-      if (typeof content !== "string") throw new Error("AI_INVALID_OUTPUT");
+      const content = await readSseContent(response.body);
+      if (content === "__LENGTH__") throw new Error("AI_OUTPUT_TRUNCATED");
+      if (typeof content !== "string" || !content)
+        throw new Error("AI_INVALID_OUTPUT");
       try {
         result =
           modern && decision
