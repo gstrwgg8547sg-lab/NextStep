@@ -10,7 +10,7 @@ export const configured = true;
 
 async function invoke(name: string, body: unknown) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 120000);
+  const timeout = setTimeout(() => controller.abort(), 65000);
   try {
     const response = await fetch(`/api/${name}`, {
       method: "POST",
@@ -33,7 +33,7 @@ async function invoke(name: string, body: unknown) {
     return json.data;
   } catch (e) {
     if (controller.signal.aborted)
-      throw new Error("请求超时，请重试；你的输入已保留。");
+      throw new Error("响应超时，请重试；你的输入已保留。");
     if (e instanceof TypeError)
       throw new Error("无法连接 AI 服务，请检查网络后重试。");
     throw e;

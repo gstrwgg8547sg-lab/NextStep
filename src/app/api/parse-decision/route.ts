@@ -1,5 +1,7 @@
 import { runParse } from "../../../lib/ai-engine";
 
+export const runtime = "edge";
+
 export async function POST(req: Request) {
   try {
     const { text } = await req.json();
@@ -9,7 +11,7 @@ export async function POST(req: Request) {
     const msg = e instanceof Error ? e.message : "UNKNOWN";
     const map: Record<string, { message: string; status: number }> = {
       AI_NOT_CONFIGURED: { message: "尚未配置 AI 服务", status: 503 },
-      AI_TIMEOUT: { message: "AI 请求超时，请重试。", status: 504 },
+      AI_TIMEOUT: { message: "AI 响应超时，请重试。", status: 504 },
       AI_OUTPUT_TRUNCATED: {
         message: "模型输出达到长度限制，请重试。",
         status: 502,

@@ -296,18 +296,19 @@ async function runAi(kind: "parse" | "analyze", input: unknown) {
     ],
     response_format: { type: "json_object" },
     thinking: { type: "disabled" },
-    max_tokens: kind === "parse" ? 3000 : 6000,
+    max_tokens: kind === "parse" ? 2500 : 5000,
   });
 
-  const deadline = Date.now() + (kind === "parse" ? 60000 : 90000);
+  const perCallMs = 30000;
+  const deadline = Date.now() + 60000;
   let result: unknown;
 
-  for (let attempt = 0; attempt < 2; attempt++) {
+  for (let attempt = 0; attempt < 3; attempt++) {
     if (Date.now() >= deadline) throw new Error("AI_TIMEOUT");
     const controller = new AbortController();
     const timer = setTimeout(
       () => controller.abort(),
-      Math.min(deadline - Date.now(), kind === "parse" ? 60000 : 90000),
+      Math.min(deadline - Date.now(), perCallMs),
     );
     try {
       const response = await fetch(url, {
@@ -320,7 +321,7 @@ async function runAi(kind: "parse" | "analyze", input: unknown) {
         signal: controller.signal,
       });
       if (!response.ok) {
-        if ((response.status === 429 || response.status >= 500) && attempt === 0) {
+        if ((response.status === 429 || response.status >= 500) && attempt < 2) {
           await new Promise((r) => setTimeout(r, 600));
           continue;
         }
@@ -382,7 +383,11 @@ async function runAi(kind: "parse" | "analyze", input: unknown) {
     } catch (error) {
       if (error instanceof Error && error.message.startsWith("AI_")) throw error;
       if (controller.signal.aborted) throw new Error("AI_TIMEOUT");
-      if (attempt === 1) throw new Error("AI_NETWORK_ERROR");
+      if (attempt < 2) {
+        await new Promise((r) => setTimeout(r, 400));
+        continue;
+      }
+      throw new Error("AI_NETWORK_ERROR");
     } finally {
       clearTimeout(timer);
     }
