@@ -329,11 +329,8 @@ button:active { transform: scale(.98); }
  .brandbar { height: 68px; }
  .slogan { font-size: 10px; gap: 4px; }
  .flow-top { padding-top: 47px; height: 105px; }
+ .device-preview { zoom: min(1.2, calc((100dvh - 30px) / 958px)); }
 }
-@media (min-width: 601px) and (max-height: 1080px) { .device-preview { zoom: .95; } }
-@media (min-width: 601px) and (max-height: 950px) { .device-preview { zoom: .82; } }
-@media (min-width: 601px) and (max-height: 820px) { .device-preview { zoom: .7; } }
-@media (min-width: 601px) and (max-height: 700px) { .device-preview { zoom: .58; } }
 
 /* Report chapters: compact overview with progressively disclosed evidence. */
 .report-navigation { position: sticky; top: 0; z-index: 25; background: var(--cream); padding: 0 24px; border-bottom: 1px solid var(--line); }
