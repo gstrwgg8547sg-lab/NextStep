@@ -10,7 +10,7 @@ export const configured = true;
 
 async function invoke(name: string, body: unknown) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 100000);
+  const timeout = setTimeout(() => controller.abort(), 45000);
   try {
     const response = await fetch(`/api/${name}`, {
       method: "POST",
@@ -25,7 +25,7 @@ async function invoke(name: string, body: unknown) {
       const ct = response.headers.get("content-type") ?? "";
       if (ct.includes("text/html"))
         throw new Error("服务正在部署或暂时不可用，请稍后重试。");
-      throw new Error("服务返回格式异常，请检查配置并重试。");
+      throw new Error("报告传输中断或响应不完整，请重试；你的输入已保留。");
     }
     if (json?.error)
       throw new Error(
@@ -36,7 +36,7 @@ async function invoke(name: string, body: unknown) {
     return json.data;
   } catch (e) {
     if (controller.signal.aborted)
-      throw new Error("响应超时，请重试；你的输入已保留。");
+      throw new Error("请求超时，请重试；你的输入已保留。");
     if (e instanceof TypeError)
       throw new Error("无法连接 AI 服务，请检查网络后重试。");
     throw e;

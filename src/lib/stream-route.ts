@@ -15,38 +15,39 @@ function mapError(msg: string, map: ErrorMap) {
   return { code: "INTERNAL", message: "服务暂时不可用，请稍后重试。", status: 500 };
 }
 
-export function streamJson(
-  work: Promise<unknown>,
-  errorMap: ErrorMap,
-): Response {
+export function streamJson(work: Promise<unknown>, errorMap: ErrorMap): Response {
   const encoder = new TextEncoder();
-  const stream = new ReadableStream({
-    async start(controller) {
-      const keepalive = setInterval(() => {
-        try {
-          controller.enqueue(encoder.encode(" "));
-        } catch {
-          // stream may already be closed
-        }
-      }, 2000);
-
-      try {
-        const data = await work;
-        controller.enqueue(encoder.encode(JSON.stringify({ data })));
-      } catch (e) {
-        const msg = e instanceof Error ? e.message : "UNKNOWN";
-        const err = mapError(msg, errorMap);
-        controller.enqueue(
-          encoder.encode(JSON.stringify({ error: { code: err.code, message: err.message } })),
-        );
-      } finally {
-        clearInterval(keepalive);
+  let closed = false;
+  let keepalive: ReturnType<typeof setInterval>;
+  let deadline: ReturnType<typeof setTimeout>;
+  const cleanup = () => { clearInterval(keepalive); clearTimeout(deadline); };
+  const stream = new ReadableStream<Uint8Array>({
+    start(controller) {
+      const finish = (payload: unknown) => {
+        if (closed) return;
+        closed = true;
+        cleanup();
+        controller.enqueue(encoder.encode(JSON.stringify(payload)));
         controller.close();
-      }
+      };
+      // Send the first byte immediately. Heartbeats do not imply analysis progress.
+      controller.enqueue(encoder.encode(" "));
+      keepalive = setInterval(() => {
+        if (!closed) controller.enqueue(encoder.encode(" "));
+      }, 2000);
+      deadline = setTimeout(() => finish({ error: {
+        code: "AI_TIMEOUT", message: "AI 响应超时，请重试；你的输入已保留。",
+      } }), 40000);
+      void work.then(data => finish({ data }), e => {
+        const err = mapError(e instanceof Error ? e.message : "UNKNOWN", errorMap);
+        finish({ error: { code: err.code, message: err.message } });
+      });
     },
+    cancel() { closed = true; cleanup(); },
   });
-
-  return new Response(stream, {
-    headers: { "Content-Type": "application/json; charset=utf-8" },
-  });
+  return new Response(stream, { headers: {
+    "Content-Type": "application/json; charset=utf-8",
+    "Cache-Control": "no-store, no-transform",
+    "X-Accel-Buffering": "no",
+  } });
 }

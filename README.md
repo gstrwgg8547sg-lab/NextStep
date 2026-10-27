@@ -174,3 +174,9 @@ Supabase Secrets 可分别配置 `AI_PARSE_MODEL` 和 `AI_ANALYZE_MODEL`，优�
 当前展示聚焦实习/工作与升学/研究选择，其他决定仍可使用。报告页提供仅保存在本机的反馈，支持主动导出单条反馈；不会自动上传或触发模型调用。
 
 [研究执行说明](docs/research/README.md) · [固定评估案例](docs/research/cases.md) · [作品集模板](docs/research/portfolio.md)。研究数据表为空白模板，真实参与者、效果和对照结果尚待收集，不能作为已验证成果使用。
+
+### 当前 Vercel 部署链路（2026-10-27）
+
+当前浏览器调用同源 `/api/parse-decision` 和 `/api/analyze-decision`，由 Next.js 服务端访问模型。请在 **Vercel 项目的 Environment Variables** 设置 `AI_API_KEY`、`AI_BASE_URL`（含 `/v1`）和 `AI_MODEL`，并重新部署使配置生效。本地开发使用未提交的 `.env.local`。这三个变量不能加 `NEXT_PUBLIC_` 前缀。上方 Supabase 部署说明适用于保留的旧版代理，当前网页不会通过它调用 AI。
+
+正常请求只调用一次模型；仅在失败且时间预算允许时重试一次。模型调用总预算为 35 秒（单次 25 秒），服务响应兜底 40 秒，浏览器超时 45 秒。响应保持 HTTP 200 流式 JSON，业务错误由 `error.code/message` 表示，因此监控必须读取最终响应体，不能只看状态码。超时或不完整输出不作为成功报告，不会用模拟分析替代。15 秒是体验目标，并非模型服务响应的保证。

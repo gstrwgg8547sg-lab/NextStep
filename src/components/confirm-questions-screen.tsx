@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { safeQuestionAnswers } from "@/lib/question-quality";
 import { useDecision } from "./decision-provider";
 import { Shell, Empty, SubmitButton } from "./shell";
 
@@ -12,9 +13,7 @@ export function ConfirmQuestionsScreen() {
   if (!d) return <Shell step={2}><Empty text="还没有待确认的信息" /></Shell>;
   const update = (patch: Partial<typeof d>) => s.updateDecision({ ...d, ...patch });
   const chipsFor = (q: { question: string; suggestedAnswers?: string[] }) =>
-    q.suggestedAnswers && q.suggestedAnswers.length > 0
-      ? q.suggestedAnswers
-      : [];
+    safeQuestionAnswers(q.question, q.suggestedAnswers);
   return (
     <Shell step={2} subStep="3/3" subLabel="补充问题" backHref="/confirm/focus">
       <div className="intro">

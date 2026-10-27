@@ -128,6 +128,7 @@ test("criteria, comparison, verification, revision and local save work end to en
   await expect(page.getByRole("heading",{name:"这次选择，真正的取舍"})).toBeVisible();
   await expect(page.getByRole("heading",{name:"哪些方案目前可行？"})).toBeVisible();
   await page.screenshot({path:info.outputPath("report-hierarchy.png"),fullPage:false});
+  await page.getByRole("button", { name: "保存", exact: true }).click();
   const feedback = page.getByLabel("报告反馈");
   await feedback.getByRole("button", {name:"存在错误",exact:true}).click();
   await feedback.getByRole("button", {name:"推断缺少依据",exact:true}).click();
@@ -155,10 +156,10 @@ test("criteria, comparison, verification, revision and local save work end to en
   await page
     .getByLabel("核实结果：导师每周可以指导多久？")
     .fill("导师确认每周一小时");
-  await page.getByRole("button", { name: "根据新信息更新报告" }).click();
+  await page.getByRole("button", { name: "用新信息更新报告" }).click();
   await expect(page).toHaveURL(/\/report$/);
   await expect(
-    page.getByRole("heading", { name: "本次倾向未改变" }),
+    page.getByRole("heading", { name: "推荐方案未改变" }),
   ).toBeVisible();
   await expect(page.locator(".revision-card")).toContainText("核实结果");
   expect(requests).toBe(2);
