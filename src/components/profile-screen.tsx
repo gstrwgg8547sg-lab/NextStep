@@ -552,17 +552,6 @@ export function ProfileScreen() {
           margin: "0 4px 8px",
         }}
       >
-        偏好设置
-      </div>
-
-      <div
-        style={{
-          fontSize: 11,
-          color: "var(--weak)",
-          fontWeight: 600,
-          margin: "0 4px 8px",
-        }}
-      >
         帮助与关于
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
