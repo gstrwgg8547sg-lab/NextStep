@@ -8,6 +8,7 @@ import { priorityNames } from "./criteria-editor";
 import { useDecision } from "./decision-provider";
 import { getFeasibility, unknownImpact } from "@/lib/schema";
 import type { ModernReport, SavedReport } from "@/lib/schema";
+import { uid } from "@/lib/utils";
 type Props = { saved: SavedReport; report: ModernReport };
 const statuses = {
   met: "符合",
@@ -369,7 +370,7 @@ export function ModernUnknowns({ saved, report: r }: Props) {
                           criteria: [
                             ...(d.criteria ?? []),
                             {
-                              id: crypto.randomUUID(),
+                              id: uid(),
                               name: f.name.slice(0, 40),
                               priority: "consider",
                               requirement: "",

@@ -18,6 +18,7 @@ import {
 import { invalidateStaleSuggestions } from "@/lib/decision-suggestions";
 import { describeRevision } from "@/lib/revision";
 import { parseDecision, analyzeDecision } from "@/lib/api";
+import { uid } from "@/lib/utils";
 function useDecisionStore() {
   const [draft, setDraft] = useState<Draft>(emptyDraft);
   const [history, setHistory] = useState<SavedReport[]>([]);
@@ -105,11 +106,11 @@ function useDecisionStore() {
           throw new Error("请返回决策标准页，添加至少一个比较标准。");
         const report = await analyzeDecision(valid.data);
         const current: SavedReport = {
-          id: crypto.randomUUID(),
+          id: uid(),
           createdAt: new Date().toISOString(),
           mode: "live",
           raw: draft.raw,
-          decision: structuredClone(valid.data),
+          decision: JSON.parse(JSON.stringify(valid.data)),
           report,
           revision: describeRevision(draft.current, valid.data),
         };
@@ -154,7 +155,7 @@ function useDecisionStore() {
     setDraft({
       raw: item.raw,
       mode: "live",
-      decision: structuredClone(item.decision),
+      decision: JSON.parse(JSON.stringify(item.decision)),
       current: item,
     });
     setError("");

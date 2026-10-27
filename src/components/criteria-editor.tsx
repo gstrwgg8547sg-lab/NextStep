@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import type { Criterion, Decision } from "@/lib/schema";
+import { uid } from "@/lib/utils";
 export const priorityNames = {
   must: "必须满足",
   prefer: "优先考虑",
@@ -95,7 +96,7 @@ export function CriteriaEditor({
               criteria: [
                 ...criteria,
                 {
-                  id: crypto.randomUUID(),
+                  id: uid(),
                   name: name.trim(),
                   priority: "consider",
                   requirement: "",

@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useDecision } from "./decision-provider";
 import { Shell, Empty, SubmitButton } from "./shell";
+import { uid } from "@/lib/utils";
 
 export function ConfirmOptionsScreen() {
   const s = useDecision();
@@ -65,7 +66,7 @@ export function ConfirmOptionsScreen() {
         </div>
         {d.options.length < 6 && (
           <button className="button secondary" onClick={() => update({
-            options: [...d.options, { id: crypto.randomUUID(), name: "", facts: "", judgments: "", unknowns: "" }],
+            options: [...d.options, { id: uid(), name: "", facts: "", judgments: "", unknowns: "" }],
           })}>
             <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
             添加候选方案
