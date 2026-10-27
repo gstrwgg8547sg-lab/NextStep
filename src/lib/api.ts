@@ -10,7 +10,7 @@ export const configured = true;
 
 async function invoke(name: string, body: unknown) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 75000);
+  const timeout = setTimeout(() => controller.abort(), 100000);
   try {
     const response = await fetch(`/api/${name}`, {
       method: "POST",
@@ -24,9 +24,9 @@ async function invoke(name: string, body: unknown) {
     } catch {
       throw new Error("服务返回格式异常，请检查配置并重试。");
     }
-    if (!response.ok)
+    if (json?.error)
       throw new Error(
-        typeof json?.error?.message === "string"
+        typeof json.error.message === "string"
           ? json.error.message
           : "AI 服务请求失败，请检查配置后重试。",
       );

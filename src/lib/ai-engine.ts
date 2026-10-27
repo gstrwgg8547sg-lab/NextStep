@@ -296,11 +296,11 @@ async function runAi(kind: "parse" | "analyze", input: unknown) {
     ],
     response_format: { type: "json_object" },
     thinking: { type: "disabled" },
-    max_tokens: kind === "parse" ? 2500 : 5000,
+    max_tokens: kind === "parse" ? 2500 : 3500,
   });
 
-  const perCallMs = 25000;
-  const deadline = Date.now() + 70000;
+  const perCallMs = 45000;
+  const deadline = Date.now() + 95000;
   let result: unknown;
 
   for (let attempt = 0; attempt < 3; attempt++) {
