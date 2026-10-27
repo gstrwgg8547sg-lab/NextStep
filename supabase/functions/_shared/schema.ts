@@ -318,8 +318,8 @@ export function validateReportForDecision(value: unknown, decision: Decision) {
         const cell = report.comparisons
           .find((c) => c.criterionId === criterion.id)!
           .assessments.find((a) => a.optionId === report.recommendedOptionId)!;
-        if (cell.status !== "met")
-          throw new Error("必须条件未满足或未确认，不能推荐该方案");
+        if (cell.status === "not_met")
+          throw new Error("必须条件未满足，不能推荐该方案");
       }
     }
     if (

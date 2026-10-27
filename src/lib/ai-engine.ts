@@ -274,7 +274,7 @@ async function runAi(kind: "parse" | "analyze", input: unknown) {
           JSON.stringify(outputSchema) +
           "\n" +
           (modern
-            ? "最后检查：先按必须条件筛选，再按优先项权衡。未承诺的协商不是当前方案。仅一个方案满足全部必须条件且无关键风险时推荐该方案并说明风险。关键必须条件无法确认时可返回null；不得强行推荐。switchConditions不能建议改选仍违反must的方案，必须说明该硬性限制先得到解决。user_fact的basis只填证据编号如F1。遵守字段长度，用户可读描述用中文。"
+            ? "最后检查：先按必须条件筛选，再按优先项权衡。未承诺的协商不是当前方案。**必须给出推荐**：即使must条件信息不足(uncertain)，也要基于已有信息选出当前最优方案，并在prerequisites中明确列出需验证的前提条件。仅当所有方案在所有标准上完全无法区分时才返回null。switchConditions说明什么情况下应改变选择。user_fact的basis只填证据编号如F1。遵守字段长度，用户可读描述用中文。"
             : concisePolicy),
       },
       {
@@ -379,7 +379,7 @@ async function runAi(kind: "parse" | "analyze", input: unknown) {
                 : "JSON格式错误";
           repair.messages[0].content += "\n需要修复：" + validationHint;
           repair.messages[0].content +=
-            "\n上次输出未通过严格校验。重新核对：comparisons完整覆盖全部标准和方案，tradeoffs完整覆盖全部方案；reasons引用有效criterionIds；user_fact的basis只填有效evidenceReferences证据ID（如F1），不填自己概括的文字，任何推导改为ai_inference；source=unknown时status=uncertain；推荐方案必须满足所有must，不能满足则null；quick不生成impacts。";
+            "\n上次输出未通过严格校验。重新核对：comparisons完整覆盖全部标准和方案，tradeoffs完整覆盖全部方案；reasons引用有效criterionIds；user_fact的basis只填有效evidenceReferences证据ID（如F1），不填自己概括的文字，任何推导改为ai_inference；source=unknown时status=uncertain；必须给出推荐方案，must条件未确认(uncertain)时仍可推荐但须在prerequisites说明前提，仅当方案明确违反must(not_met)时不得推荐；quick不生成impacts。";
           requestBody = JSON.stringify(repair);
           continue;
         }

@@ -1,7 +1,8 @@
 import { runParse } from "../../../lib/ai-engine";
 import { streamJson } from "../../../lib/stream-route";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
+export const maxDuration = 60;
 
 const ERROR_MAP = {
   AI_STREAM_INTERRUPTED: { message: "模型响应中断，请重试；你的输入已保留。", status: 502 },
