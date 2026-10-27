@@ -329,7 +329,7 @@ button:active { transform: scale(.98); }
  .brandbar { height: 68px; }
  .slogan { font-size: 10px; gap: 4px; }
  .flow-top { padding-top: 47px; height: 105px; }
- .device-preview { zoom: min(1, calc((100vh - 100px) / 958px), calc((100vw - 40px) / 460px)); transform-origin: center center; }
+ .device-preview { zoom: min(1, calc((100dvh - 24px) / 958px), calc((100vw - 40px) / 460px)); transform-origin: center center; }
 }
 
 /* Report chapters: compact overview with progressively disclosed evidence. */
