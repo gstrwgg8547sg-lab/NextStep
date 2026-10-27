@@ -36,7 +36,7 @@ export async function POST(req: Request) {
         {
           error: {
             code: "AI_RATE_LIMITED",
-            message: "模型平台调用受限，请稍后重试。",
+            message: "AI 服务暂时繁忙，请稍后重试。",
           },
         },
         { status: 429 },

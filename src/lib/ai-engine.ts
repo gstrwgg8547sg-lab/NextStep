@@ -299,8 +299,8 @@ async function runAi(kind: "parse" | "analyze", input: unknown) {
     max_tokens: kind === "parse" ? 2500 : 5000,
   });
 
-  const perCallMs = 30000;
-  const deadline = Date.now() + 60000;
+  const perCallMs = 25000;
+  const deadline = Date.now() + 70000;
   let result: unknown;
 
   for (let attempt = 0; attempt < 3; attempt++) {
@@ -322,7 +322,7 @@ async function runAi(kind: "parse" | "analyze", input: unknown) {
       });
       if (!response.ok) {
         if ((response.status === 429 || response.status >= 500) && attempt < 2) {
-          await new Promise((r) => setTimeout(r, 600));
+          await new Promise((r) => setTimeout(r, 2000));
           continue;
         }
         throw new Error(`AI_HTTP_${response.status}`);

@@ -10,7 +10,7 @@ export const configured = true;
 
 async function invoke(name: string, body: unknown) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 65000);
+  const timeout = setTimeout(() => controller.abort(), 75000);
   try {
     const response = await fetch(`/api/${name}`, {
       method: "POST",
