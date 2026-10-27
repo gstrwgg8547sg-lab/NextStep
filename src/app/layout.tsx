@@ -19,6 +19,24 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+(function(){
+  function setZoom(){
+    var w = window.innerWidth, h = window.innerHeight;
+    var z = Math.min(1, (h - 24) / 958, (w - 40) / 460);
+    document.documentElement.style.setProperty('--app-zoom', z);
+  }
+  setZoom();
+  window.addEventListener('resize', setZoom);
+  window.addEventListener('orientationchange', setZoom);
+})();
+`,
+          }}
+        />
+      </head>
       <body>
         <DecisionProvider>{children}</DecisionProvider>
       </body>
