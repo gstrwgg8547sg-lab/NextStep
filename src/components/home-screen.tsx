@@ -2,12 +2,12 @@
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useDecision } from "./decision-provider";
-import { Shell, SubmitButton } from "./shell";
+import { Shell } from "./shell";
 
 const iconPaths: Record<string, React.ReactNode> = {
   sparkles: <><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /><path d="M20 2v4" /><path d="M22 4h-4" /><circle cx="4" cy="20" r="2" /></>,
-  briefcase: <><rect x="3" y="7" width="18" height="13" rx="2" /><path d="M8 7V4h8v3M3 12h18" /></>,
-  book: <><path d="M4 4h6a2 2 0 0 1 2 2v15a3 3 0 0 0-3-3H4ZM20 4h-6a2 2 0 0 0-2 2v15a3 3 0 0 1 3-3h5Z" /></>,
+  briefcase: <><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /><rect width="20" height="14" x="2" y="6" rx="2" /></>,
+  book: <><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z" /><path d="M22 10v6" /><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5" /></>,
   home: <><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" /><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></>,
   dice: <><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M16 8h.01M8 8h.01M8 16h.01M16 16h.01M12 12h.01" /></>,
   brain: <><path d="M12 18V5" /><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /><path d="M17.707 6.294A3 3 0 1 0 12 5a3 3 0 1 0-5.707 1.294" /><path d="M17.996 5.125a4 4 0 0 1 2.526 5.77" /><path d="M18 18a4 4 0 0 0 2-7.465" /><path d="M19.967 17.482a4 4 0 1 1-7.967.517 4 4 0 1 1-7.967-.517" /><path d="M6 18a4 4 0 0 1-2-7.465" /><path d="M6.004 5.125a4 4 0 0 0-2.526 5.77" /></>,
@@ -26,27 +26,9 @@ function Ico({ name, size = 20 }: { name: string; size?: number }) {
 }
 
 const templates = [
-  {
-    icon: "briefcase",
-    title: "实习 / 工作",
-    desc: "Offer 对比、跳槽选择",
-    prompt: "我在比较两份实习或工作机会。\n选项 A 的已知情况：\n选项 B 的已知情况：\n我最在意：\n不能妥协的条件：",
-    gradient: "from-pop-pink to-pop-pink-dark",
-  },
-  {
-    icon: "book",
-    title: "升学 / 研究",
-    desc: "考研、留学、读博",
-    prompt: "我在考虑升学或研究方向的选择。\n选项 A：\n选项 B：\n我的基础和目标：\n时间或其他限制：",
-    gradient: "from-pop-cyan to-pop-cyan-dark",
-  },
-  {
-    icon: "home",
-    title: "生活 / 财务",
-    desc: "买房、投资、大额消费",
-    prompt: "我正在纠结一个生活中的重大决定。\n目前考虑的选择：\n各自已经知道的情况：\n我最在意：\n不能妥协的条件：",
-    gradient: "from-pop-green to-pop-green-dark",
-  },
+  { icon: "briefcase", title: "实习 / 工作", desc: "Offer 对比、跳槽选择", gradient: "from-pop-pink to-pop-pink-dark", prompt: "我在比较两份实习或工作机会。\n选项 A 的已知情况：\n选项 B 的已知情况：\n我最在意：\n不能妥协的条件：" },
+  { icon: "book", title: "升学 / 研究", desc: "考研、留学、读博", gradient: "from-pop-cyan to-pop-cyan-dark", prompt: "我在考虑升学或研究方向的选择。\n选项 A：\n选项 B：\n我的基础和目标：\n时间或其他限制：" },
+  { icon: "home", title: "生活 / 财务", desc: "买房、投资、大额消费", gradient: "from-pop-green to-pop-green-dark", prompt: "我正在纠结一个生活中的重大决定。\n目前考虑的选择：\n各自已经知道的情况：\n我最在意：\n不能妥协的条件：" },
 ];
 
 const steps = [
@@ -71,14 +53,16 @@ export function HomeScreen() {
     inputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
+  const disabled = !!s.busy || !s.ready || s.draft.raw.length < 10;
+
   return (
     <Shell isHome>
-      <section className="text-center mb-10 max-w-3xl mx-auto mt-4">
+      <div className="text-center mb-10 max-w-3xl mx-auto mt-16">
         <div className="inline-flex items-center gap-2 px-5 py-2 bg-white border-2 border-ink-900 rounded-full mb-8" style={{ boxShadow: "3px 3px 0 #1a1a2e" }}>
           <Ico name="sparkles" size={16} />
           <span className="text-sm font-semibold text-ink-800">AI 决策助手</span>
         </div>
-        <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+        <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
           <span className="scribble-underline">纠结选哪个？</span>
           <br />
           <span className="gradient-rainbow">让 AI 帮你想清楚！</span>
@@ -87,18 +71,21 @@ export function HomeScreen() {
           把你的选择告诉 AI，它会帮你拆解标准、分析利弊，
           <br className="hidden md:block" />还给你推荐方案 + 前提条件 + 切换条件
         </p>
-      </section>
+      </div>
 
       <div className="flex flex-wrap justify-center gap-4 mb-10">
-        <div className="flex items-center gap-3 px-5 py-3 bg-white border-2 border-ink-900 rounded-2xl" style={{ boxShadow: "4px 4px 0 #1a1a2e" }}>
-          <div><div className="text-2xl font-bold gradient-rainbow">∞</div><div className="text-xs text-ink-600">种可能性</div></div>
-        </div>
-        <div className="flex items-center gap-3 px-5 py-3 bg-white border-2 border-ink-900 rounded-2xl" style={{ boxShadow: "4px 4px 0 #1a1a2e" }}>
-          <div><div className="text-2xl font-bold gradient-rainbow">3</div><div className="text-xs text-ink-600">步想清楚</div></div>
-        </div>
-        <div className="flex items-center gap-3 px-5 py-3 bg-white border-2 border-ink-900 rounded-2xl" style={{ boxShadow: "4px 4px 0 #1a1a2e" }}>
-          <div><div className="text-2xl font-bold gradient-rainbow">0</div><div className="text-xs text-ink-600">遗憾率</div></div>
-        </div>
+        {[
+          { num: "∞", label: "种可能性" },
+          { num: "3", label: "步想清楚" },
+          { num: "0", label: "遗憾率" },
+        ].map((st) => (
+          <div key={st.label} className="flex items-center gap-3 px-5 py-3 bg-white border-2 border-ink-900 rounded-2xl" style={{ boxShadow: "4px 4px 0 #1a1a2e" }}>
+            <div>
+              <div className="text-2xl font-bold gradient-rainbow">{st.num}</div>
+              <div className="text-xs text-ink-600">{st.label}</div>
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className="w-full max-w-2xl mx-auto">
@@ -117,11 +104,7 @@ export function HomeScreen() {
             <div className="flex items-center gap-2">
               <span className="text-sm text-ink-500">{s.draft.raw.length}/2000 字</span>
             </div>
-            <button
-              className="btn-pop btn-pop-pink px-8 py-3 font-bold flex items-center gap-2"
-              disabled={!!s.busy || !s.ready || s.draft.raw.length < 10}
-              onClick={start}
-            >
+            <button className="btn-pop btn-pop-pink px-8 py-3 font-bold flex items-center gap-2" disabled={disabled} onClick={start}>
               <Ico name="wand" size={20} />
               {s.error ? "重试梳理" : "帮我梳理"}
               <Ico name="arrow" size={20} />
@@ -226,6 +209,11 @@ export function HomeScreen() {
           </button>
         </div>
       </div>
+
+      <footer className="text-center text-sm text-ink-500 mt-20 pb-8">
+        <p className="text-lg font-bold text-ink-900 mb-2">Next<span className="gradient-rainbow">Step</span> · 看清取舍，决定由你</p>
+        <p>用 AI 做决策，但决定权永远在你手上</p>
+      </footer>
     </Shell>
   );
 }

@@ -56,18 +56,22 @@ export function Shell({
             </div>
           </>
         ) : (
-          <header className="brandbar">
-            <Link className="brand" href="/" aria-label="NextStep 首页">
-              <span className="brand-logo"><Icon name="sparkles" /></span>
-              Next<span>Step</span>
-            </Link>
-            <div className="nav-links">
-              <Link className="nav-link primary" href="/dice">🎲 决策骰子</Link>
-              <Link className="nav-link" href="/history">📒 历史记录</Link>
+          <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4">
+            <div className="max-w-5xl mx-auto flex items-center justify-between">
+              <Link className="flex items-center gap-2" href="/" aria-label="NextStep 首页">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-pop-pink to-pop-yellow flex items-center justify-center" style={{ boxShadow: "3px 3px 0 #1a1a2e" }}>
+                  <Icon name="sparkles" />
+                </div>
+                <span className="text-xl font-bold text-ink-900">Next<span className="gradient-rainbow">Step</span></span>
+              </Link>
+              <div className="flex items-center gap-3">
+                <Link className="hidden sm:flex items-center gap-1.5 px-4 py-2 bg-white border-2 border-ink-900 rounded-full text-sm font-medium hover:bg-pop-yellow/20 transition-all" style={{ boxShadow: "3px 3px 0 #1a1a2e" }} href="/dice">决策骰子</Link>
+                <Link className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-ink-700 hover:text-ink-900 transition-colors" href="/history">历史记录</Link>
+              </div>
             </div>
-          </header>
+          </nav>
         )}
-        <div className="page-content">
+        <div className={isHome ? "page-content pt-16" : "page-content"}>
           <main aria-busy={!!busy}>
             {busy && <AnalysisFeedback key={busy} kind={busy} question={busy === "parse" ? draft.raw : (draft.decision?.title || draft.raw)} />}
             {draft.current?.mode === "demo" && step === 3 && (
@@ -83,7 +87,7 @@ export function Shell({
             {notice && <p className="success" role="status">{notice}</p>}
             {children}
           </main>
-          {!showFlow && <div className="site-note">NextStep · 看清取舍，决定由你 🎯</div>}
+          {!showFlow && !isHome && <div className="site-note">NextStep · 看清取舍，决定由你 🎯</div>}
         </div>
       </div>
     </div>

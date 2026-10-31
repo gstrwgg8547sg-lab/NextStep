@@ -84,8 +84,8 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 
 /* ===== Layout ===== */
 .app-shell { min-height: 100vh; position: relative; z-index: 1; }
-.page-content { padding: 0 20px 100px; max-width: 720px; margin: 0 auto; }
-.home .page-content { padding-bottom: 80px; }
+.page-content { padding: 0 24px 100px; max-width: 720px; margin: 0 auto; }
+.home .page-content { padding: 0 24px 80px; max-width: none; margin: 0; }
 
 /* ===== Brand bar ===== */
 .brandbar { padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; max-width: 720px; margin: 0 auto; }
