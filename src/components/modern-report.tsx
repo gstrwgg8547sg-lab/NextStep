@@ -14,7 +14,6 @@ import {
   Plus,
   Clock,
 } from "lucide-react";
-import { ReportFeedback } from "./report-feedback";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Shell, SubmitButton } from "./shell";
@@ -62,7 +61,7 @@ export function ModernSummary({ saved, report: r }: Props) {
               <span className="chip-pop-purple text-xs">
                 {saved.decision.depth === "quick" ? "简明分析" : "深度分析"}
               </span>
-              <span>{new Date(saved.createdAt).toLocaleDateString("zh-CN")}</span>
+              <span>{new Date().toLocaleDateString("zh-CN")}</span>
             </div>
           </div>
 
@@ -246,9 +245,6 @@ export function ModernSummary({ saved, report: r }: Props) {
           </p>
         </div>
       </main>
-      {saved.mode === "live" && (
-        <ReportFeedback key={saved.id} reportId={saved.id} />
-      )}
       <ReportAction />
     </Shell>
   );
@@ -768,10 +764,10 @@ export function ModernUnknowns({ saved, report: r }: Props) {
             )}
           </fieldset>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pb-16">
             <Link
               href="/report"
-              className="btn-pop flex items-center gap-2 px-6 py-3 text-ink-700"
+              className="btn-pop flex items-center gap-2 px-6 py-3 text-ink-700 whitespace-nowrap"
             >
               ← 返回结论
             </Link>

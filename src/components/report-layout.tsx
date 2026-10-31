@@ -9,7 +9,6 @@ import {
   House,
   Settings,
   CircleCheck,
-  ArrowRight,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useDecision } from "./decision-provider";
@@ -74,15 +73,15 @@ export function ReportAction() {
   const router = useRouter();
   const [saved, setSaved] = useState(false);
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
-      <Link href="/" className="btn-pop flex items-center gap-2 px-6 py-3 text-ink-700">
+    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8 pb-16">
+      <Link href="/" className="btn-pop flex items-center gap-2 px-6 py-3 text-ink-700 whitespace-nowrap">
         <House className="w-4 h-4" /> 返回首页
       </Link>
-      <Link href="/confirm/focus" className="btn-pop flex items-center gap-2 px-6 py-3 text-ink-700">
+      <Link href="/confirm/focus" className="btn-pop flex items-center gap-2 px-6 py-3 text-ink-700 whitespace-nowrap">
         <Settings className="w-4 h-4" /> 修改条件并重新分析
       </Link>
       <button
-        className={`btn-pop flex items-center gap-2 px-6 py-3 font-semibold transition-all ${saved ? "btn-pop-green" : "btn-pop-pink"}`}
+        className={`btn-pop flex items-center gap-2 px-6 py-3 font-semibold transition-all whitespace-nowrap ${saved ? "btn-pop-green" : "btn-pop-pink"}`}
         disabled={!s.draft.current || !!s.busy}
         onClick={() => {
           if (s.saveReport()) {
@@ -101,9 +100,6 @@ export function ReportAction() {
           </>
         )}
       </button>
-      <Link href="/report/factors" className="flex items-center gap-2 text-ink-600 hover:text-ink-800 transition-colors">
-        查看待核实信息 <ArrowRight className="w-4 h-4" />
-      </Link>
     </div>
   );
 }
