@@ -77,7 +77,7 @@ export function HomeScreen() {
         {[
           { num: "∞", label: "种可能性" },
           { num: "3", label: "步想清楚" },
-          { num: "0", label: "遗憾率" },
+          { num: "你", label: "掌握决定权" },
         ].map((st) => (
           <div key={st.label} className="flex items-center gap-3 px-5 py-3 bg-white border-2 border-ink-900 rounded-2xl" style={{ boxShadow: "4px 4px 0 #1a1a2e" }}>
             <div>
@@ -111,7 +111,7 @@ export function HomeScreen() {
             </button>
           </div>
           <p className="text-xs text-ink-500 mt-4 flex items-center gap-1.5">
-            <Ico name="lock" size={14} /> 仅保存在你的浏览器，不会上传到服务器
+            <Ico name="lock" size={14} /> 草稿与报告保存在本机；分析时会将输入发送给 AI 服务
           </p>
         </div>
       </div>
@@ -192,7 +192,7 @@ export function HomeScreen() {
         <div className="text-center">
           <div className="inline-block px-6 py-3 bg-white border-2 border-dashed border-pop-purple rounded-2xl">
             <p className="text-sm text-ink-700">
-              <span className="text-pop-purple font-bold">冷知识：</span>研究显示，把选择写下来能提升 30% 的决策质量
+              <span className="text-pop-purple font-bold">小提示：</span>先写清事实与底线，再比较收益、代价和未知信息
             </p>
           </div>
         </div>
@@ -200,7 +200,7 @@ export function HomeScreen() {
 
       <div className="w-full max-w-xl mx-auto mt-20 text-center">
         <div className="card-pop-pink p-8">
-          <h3 className="text-2xl font-bold text-ink-900 mb-2">准备好做一个不后悔的决定了吗？</h3>
+          <h3 className="text-2xl font-bold text-ink-900 mb-2">准备好看清这次选择的取舍了吗？</h3>
           <p className="text-ink-700 mb-6">现在就开始，让 AI 帮你想清楚</p>
           <button className="btn-pop btn-pop-yellow px-8 py-4 font-bold text-lg" onClick={() => inputRef.current?.focus()}>
             <span className="flex items-center gap-2">

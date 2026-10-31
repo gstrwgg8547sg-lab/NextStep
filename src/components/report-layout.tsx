@@ -1,15 +1,26 @@
 "use client";
+import { useState } from "react";
 import Link from "next/link";
+import {
+  FileText,
+  ChartColumn,
+  CircleAlert,
+  Save,
+  House,
+  Settings,
+  CircleCheck,
+  ArrowRight,
+} from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useDecision } from "./decision-provider";
 
 const tabs = [
-  { href: "/report", label: "结论", icon: "✨" },
-  { href: "/report/options", label: "方案对比", icon: "⚖️" },
-  { href: "/report/factors", label: "待核实", icon: "🔍" },
+  { href: "/report", label: "结论", icon: FileText },
+  { href: "/report/options", label: "方案对比", icon: ChartColumn },
+  { href: "/report/factors", label: "待核实", icon: CircleAlert },
 ];
 
-export function ReportNav() {
+export function ReportNav({ showSave = true }: { showSave?: boolean }) {
   const router = useRouter();
   const s = useDecision();
   return (
@@ -22,13 +33,13 @@ export function ReportNav() {
       </Link>
       <div className="report-nav-links">
         <Link href="/history" className="report-nav-link">决策记录</Link>
-        <button
+        {showSave && <button
           className="report-nav-btn"
           onClick={() => { if (s.saveReport()) router.push("/history"); }}
           disabled={!s.draft.current || !!s.busy}
         >
           保存
-        </button>
+        </button>}
       </div>
     </nav>
   );
@@ -46,7 +57,7 @@ export function ReportTabs() {
             className={`report-tab ${path === t.href ? "active" : ""}`}
             aria-current={path === t.href ? "page" : undefined}
           >
-            <span>{t.icon}</span> {t.label}
+            <t.icon size={16} aria-hidden="true" /> {t.label}
           </Link>
         ))}
       </nav>
@@ -59,10 +70,39 @@ export function ReportNavigation() {
 }
 
 export function ReportAction() {
+  const s = useDecision();
+  const router = useRouter();
+  const [saved, setSaved] = useState(false);
   return (
-    <div className="action-bar report-action">
-      <Link className="btn-pop btn-pop-purple px-8 py-3 font-bold" href="/confirm">
-        修改条件并重新分析
+    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
+      <Link href="/" className="btn-pop flex items-center gap-2 px-6 py-3 text-ink-700">
+        <House className="w-4 h-4" /> 返回首页
+      </Link>
+      <Link href="/confirm/focus" className="btn-pop flex items-center gap-2 px-6 py-3 text-ink-700">
+        <Settings className="w-4 h-4" /> 修改条件并重新分析
+      </Link>
+      <button
+        className={`btn-pop flex items-center gap-2 px-6 py-3 font-semibold transition-all ${saved ? "btn-pop-green" : "btn-pop-pink"}`}
+        disabled={!s.draft.current || !!s.busy}
+        onClick={() => {
+          if (s.saveReport()) {
+            setSaved(true);
+            setTimeout(() => setSaved(false), 2000);
+          }
+        }}
+      >
+        {saved ? (
+          <>
+            <CircleCheck className="w-4 h-4" /> 已保存
+          </>
+        ) : (
+          <>
+            <Save className="w-4 h-4" /> 保存报告
+          </>
+        )}
+      </button>
+      <Link href="/report/factors" className="flex items-center gap-2 text-ink-600 hover:text-ink-800 transition-colors">
+        查看待核实信息 <ArrowRight className="w-4 h-4" />
       </Link>
     </div>
   );

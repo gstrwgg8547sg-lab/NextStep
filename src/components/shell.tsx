@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { AnalysisFeedback } from "./analysis-feedback";
-import { ReportNavigation } from "./report-layout";
+import { ReportNavigation, ReportNav } from "./report-layout";
 import { useEffect, useState } from "react";
 import { useDecision } from "./decision-provider";
 
@@ -39,21 +39,16 @@ export function Shell({
   const showFlow = !!step && step > 1;
   return (
     <div className="app-shell">
-      <div className={isHome ? "home" : step === 3 ? "report-screen" : ""}>
+      <div className={isHome ? "home" : step === 3 ? "report-screen" : showFlow ? "confirm-screen" : ""}>
         {step === 3 ? <ReportNavigation /> : showFlow ? (
           <>
-            <header className="flow-top">
-              {backHref ? (
-                <Link href={backHref} aria-label="返回"><Icon name="back" /></Link>
-              ) : <span />}
-              <b>{subLabel ? `${step === 3 ? "AI 决策报告" : "确认信息"} · ${subLabel}` : "AI 决策分析报告"}</b>
-              <span>{subStep ?? `${step}/3`}</span>
-            </header>
-            <div className="progress">
-              {[1, 2, 3].map((i) => (
-                <i key={i} className={i <= (subStep ? Number(subStep.split("/")[0]) : (step ?? 1)) ? "active" : ""} />
-              ))}
-            </div>
+            <ReportNav showSave={false} />
+            <nav className="confirmation-steps" aria-label="确认信息进度">
+              {[1, 2, 3].map(i => {
+                const current = Number(subStep?.split("/")[0] ?? 1);
+                return <span key={i} className={i <= current ? "complete" : ""} aria-current={i === current ? "step" : undefined}>{i < current ? "✓" : i}</span>;
+              })}
+            </nav>
           </>
         ) : (
           <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4">

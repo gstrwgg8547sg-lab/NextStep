@@ -21,6 +21,7 @@ export function ConfirmOptionsScreen() {
         <p>把你正在比较的选项写下来，已知多少都可以。</p>
       </div>
       <fieldset disabled={!!s.busy} className="contents">
+        <div className="card-pop decision-context">
         <label className="field">
           <span>决策主题</span>
           <input className="input" value={d.title} maxLength={100} onChange={(e) => update({ title: e.target.value })} />
@@ -32,6 +33,7 @@ export function ConfirmOptionsScreen() {
           <option value="life">生活</option>
           <option value="other">其他</option>
         </select>
+        </div>
         <div className="stack">
           {d.options.map((o, i) => {
             const letter = String.fromCharCode(65 + i);

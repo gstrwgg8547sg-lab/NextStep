@@ -12,6 +12,7 @@ import {
   Info,
   ChevronDown,
   Plus,
+  Clock,
 } from "lucide-react";
 import { ReportFeedback } from "./report-feedback";
 import Link from "next/link";
@@ -43,7 +44,7 @@ export function ModernSummary({ saved, report: r }: Props) {
   const noneFeasible = feasibility.every((o) => o.status === "excluded");
   return (
     <Shell step={3}>
-      <main className="min-h-screen pt-24 pb-20 px-6">
+      <main className="report-page min-h-screen pt-24 pb-20 px-6">
         <div className="max-w-3xl mx-auto">
           {changed && (
             <div className="notice">
@@ -51,7 +52,9 @@ export function ModernSummary({ saved, report: r }: Props) {
             </div>
           )}
 
-          <div className="text-center mb-8">
+          <ReportTabs />
+
+          <div className="text-center mb-8 report-heading">
             <h1 className="text-2xl md:text-3xl font-bold text-ink-900 mb-2">
               {saved.decision.title}
             </h1>
@@ -63,7 +66,6 @@ export function ModernSummary({ saved, report: r }: Props) {
             </div>
           </div>
 
-          <ReportTabs />
 
           <section className="relative card-pop-purple p-8 mb-6 overflow-hidden">
             <div className="absolute -top-10 -right-10 w-40 h-40 bg-pop-yellow/20 rounded-full blur-2xl" />
@@ -143,8 +145,8 @@ export function ModernSummary({ saved, report: r }: Props) {
             </h3>
             <div className="space-y-3">
               {r.reasons.map((x, i) => (
-                <div className="card-pop-inner overflow-hidden" key={i}>
-                  <div className="w-full p-4 flex items-start gap-3 text-left">
+                <details className="card-pop-inner report-reason overflow-hidden" key={i}>
+                  <summary className="w-full p-4 flex items-start gap-3 text-left">
                     <span className="text-pop-cyan-dark font-mono text-sm font-bold mt-0.5">
                       {String(i + 1).padStart(2, "0")}
                     </span>
@@ -175,17 +177,17 @@ export function ModernSummary({ saved, report: r }: Props) {
                             .join(" · ")}
                         </span>
                       </div>
-                      <p className="text-sm text-ink-700 mt-2">
-                        {x.explanation}
-                      </p>
                     </div>
+                    <ChevronDown aria-hidden="true" className="reason-chevron w-4 h-4 shrink-0 mt-1" />
+                  </summary>
+                  <div className="reason-content px-4 pb-4">
+                    <p className="text-sm text-ink-700">{x.explanation}</p>
+                    <p className="text-xs text-ink-500 mt-2">依据：{x.basis}</p>
                   </div>
-                </div>
+                </details>
               ))}
             </div>
           </section>
-
-          <Feasibility report={r} saved={saved} />
 
           {revision && (
             <section className="card-pop p-6 mb-6">
@@ -213,28 +215,23 @@ export function ModernSummary({ saved, report: r }: Props) {
           )}
 
           {!!r.prerequisites.length && (
-            <section className="card-pop p-6 mb-6">
-              <h2 className="text-lg font-bold text-ink-900 mb-4">
-                结论成立的前提
-              </h2>
-              {r.prerequisites.map((x, i) => (
-                <p key={i} className="text-sm text-ink-700 mb-2">
-                  • {x}
-                </p>
-              ))}
-            </section>
-          )}
-
-          {!!r.switchConditions.length && (
-            <details className="card-pop p-6 mb-6">
-              <summary className="text-lg font-bold text-ink-900 cursor-pointer">
-                什么情况下会改变选择？
+            <details open className="card-pop-green p-6 mb-6 report-condition">
+              <summary className="condition-summary">
+                <span className="condition-icon bg-pop-green-light"><CircleCheck size={18} /></span>
+                <span><b>结论成立的前提</b><small>{r.prerequisites.length} 个前提条件</small></span>
+                <ChevronDown className="reason-chevron" size={18} />
               </summary>
-              {r.switchConditions.map((x, i) => (
-                <p key={i} className="text-sm text-ink-700 mt-3">
-                  • {x}
-                </p>
-              ))}
+              <ol className="condition-list">{r.prerequisites.map((x, i) => <li key={i}><span>{i + 1}</span><p>{x}</p></li>)}</ol>
+            </details>
+          )}
+          {!!r.switchConditions.length && (
+            <details className="card-pop-pink p-6 mb-6 report-condition">
+              <summary className="condition-summary">
+                <span className="condition-icon bg-pop-pink-light"><ArrowUpDown size={18} /></span>
+                <span><b>什么情况下会改变选择？</b><small>{r.switchConditions.length} 个切换条件</small></span>
+                <ChevronDown className="reason-chevron" size={18} />
+              </summary>
+              <ol className="condition-list">{r.switchConditions.map((x, i) => <li key={i}><span>{i + 1}</span><p>{x}</p></li>)}</ol>
             </details>
           )}
 
@@ -270,8 +267,8 @@ export function ModernComparison({ saved, report: r }: Props) {
   const [openTradeoff, setOpenTradeoff] = useState<string | null>(null);
 
   const statusMeta: Record<string, { bg: string; color: string; icon: string; label: string }> = {
-    pass: { bg: "bg-pop-green-light", color: "text-pop-green-dark", icon: "✓", label: "符合" },
-    fail: { bg: "bg-pop-pink-light", color: "text-pop-pink-dark", icon: "✕", label: "不符合" },
+    met: { bg: "bg-pop-green-light", color: "text-pop-green-dark", icon: "✓", label: "符合" },
+    not_met: { bg: "bg-pop-pink-light", color: "text-pop-pink-dark", icon: "✕", label: "不符合" },
     uncertain: { bg: "bg-pop-yellow-light", color: "text-pop-yellow-dark", icon: "?", label: "待确认" },
     mixed: { bg: "bg-pop-purple-light", color: "text-pop-purple-dark", icon: "≈", label: "有取舍" },
     unknown: { bg: "bg-ink-100", color: "text-ink-400", icon: "—", label: "—" },
@@ -282,7 +279,7 @@ export function ModernComparison({ saved, report: r }: Props) {
 
   return (
     <Shell step={3}>
-      <main className="min-h-screen pt-24 pb-20 px-6">
+      <main className="report-page min-h-screen pt-24 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
           {changed && (
             <div className="notice">
@@ -290,7 +287,9 @@ export function ModernComparison({ saved, report: r }: Props) {
             </div>
           )}
 
-          <div className="text-center mb-8">
+          <ReportTabs />
+
+          <div className="text-center mb-8 report-heading">
             <h1 className="text-2xl md:text-3xl font-bold text-ink-900 mb-2">
               先看底线，再看差异
             </h1>
@@ -299,7 +298,6 @@ export function ModernComparison({ saved, report: r }: Props) {
             </p>
           </div>
 
-          <ReportTabs />
 
           <section className="card-pop-cyan p-6 mb-6 overflow-x-auto">
             <h3 className="font-bold text-ink-900 mb-2">方案对比一览</h3>
@@ -468,19 +466,29 @@ export function ModernComparison({ saved, report: r }: Props) {
                             <p className="text-sm text-ink-700">{t.opportunityCost}</p>
                           </div>
                         </div>
-                        <p className="text-xs text-ink-400">
-                          <span className="text-ink-500 font-medium">AI 推断，依据：</span>
+                        <div className="pt-3 border-t border-ink-200">
+                          <p className="text-xs text-ink-500 mb-3 flex items-center gap-1">
+                            <Clock className="w-3 h-3" /> 影响分析（按时间维度）
+                          </p>
+                          <div className="space-y-2">
+                            {(["short", "medium", "long"] as const).map((h) => {
+                              const imp = t.impacts.find((x) => x.horizon === h);
+                              if (!imp) return null;
+                              return (
+                                <div key={h} className="flex gap-3">
+                                  <span className="text-xs text-ink-500 w-12 flex-shrink-0 font-semibold">
+                                    {horizons[h]}
+                                  </span>
+                                  <p className="text-sm text-ink-600">{imp.effect}</p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                        <p className="text-xs text-ink-400 pt-2 border-t border-ink-200">
+                          <span className="text-ink-500 font-medium">AI 推断依据：</span>
                           {t.basis}
                         </p>
-                        {t.impacts.map((x, i) => (
-                          <div key={i} className="pl-2">
-                            <p className="text-sm text-ink-700">
-                              <b>{horizons[x.horizon]}：</b>
-                              {x.effect}
-                            </p>
-                            <p className="text-xs text-ink-400">成立条件：{x.condition}</p>
-                          </div>
-                        ))}
                       </div>
                     )}
                   </div>
@@ -557,7 +565,7 @@ export function ModernUnknowns({ saved, report: r }: Props) {
 
   return (
     <Shell step={3}>
-      <main className="min-h-screen pt-24 pb-20 px-6">
+      <main className="report-page min-h-screen pt-24 pb-20 px-6">
         <div className="max-w-3xl mx-auto">
           {changed && (
             <div className="notice">
@@ -565,7 +573,9 @@ export function ModernUnknowns({ saved, report: r }: Props) {
             </div>
           )}
 
-          <div className="text-center mb-8">
+          <ReportTabs />
+
+          <div className="text-center mb-8 report-heading">
             <h1 className="text-2xl md:text-3xl font-bold text-ink-900 mb-2">
               先确认，最关键的事
             </h1>
@@ -574,7 +584,6 @@ export function ModernUnknowns({ saved, report: r }: Props) {
             </p>
           </div>
 
-          <ReportTabs />
 
           <fieldset className="contents" disabled={!!s.busy}>
             <div className="space-y-8 mb-8">
@@ -805,16 +814,16 @@ function ComparisonMatrix({
         : "border-l-ink-200";
 
   return (
-    <div className="min-w-[500px]">
+    <div className="comparison-overview" style={{ minWidth: options.length > 2 ? 160 + options.length * 90 : undefined }}>
       <div
         className="grid gap-2 mb-3"
-        style={{ gridTemplateColumns: `1fr repeat(${options.length}, 120px)` }}
+        style={{ gridTemplateColumns: `minmax(100px, 1.4fr) repeat(${options.length}, minmax(56px, 1fr))` }}
       >
         <div className="text-sm text-ink-500">决策标准</div>
         {options.map((o) => (
           <div
             key={o.id}
-            className="text-sm font-bold text-ink-800 text-center truncate"
+            className="text-sm font-bold text-ink-800 text-center break-words"
           >
             {o.name}
           </div>
@@ -827,7 +836,7 @@ function ComparisonMatrix({
             <div
               key={c.id}
               className={`grid gap-2 items-center card-pop-inner py-3 px-4 border-l-4 ${borderCls(c.priority)}`}
-              style={{ gridTemplateColumns: `1fr repeat(${options.length}, 120px)` }}
+              style={{ gridTemplateColumns: `minmax(100px, 1.4fr) repeat(${options.length}, minmax(56px, 1fr))` }}
             >
               <div className="flex items-center gap-2 min-w-0">
                 <span className="text-sm text-ink-800 truncate">{c.name}</span>
