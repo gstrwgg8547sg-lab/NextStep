@@ -9,13 +9,13 @@ export function ReportNavigation() {
   return (
     <div className="report-navigation">
       <div className="report-toolbar">
-        <Link href="/?tab=history" aria-label="返回决策记录">
+        <Link href="/history" aria-label="返回决策记录">
           ‹
         </Link>
         <b>决策分析报告</b>
         <button
           onClick={() => {
-            if (s.saveReport()) router.push("/?tab=history");
+            if (s.saveReport()) router.push("/history");
           }}
           disabled={!s.draft.current || !!s.busy}
         >

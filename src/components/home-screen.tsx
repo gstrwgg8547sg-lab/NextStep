@@ -1,252 +1,231 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRef } from "react";
+import { useRouter } from "next/navigation";
 import { useDecision } from "./decision-provider";
 import { Shell, SubmitButton } from "./shell";
-import { ProfileScreen } from "./profile-screen";
 
 const iconPaths: Record<string, React.ReactNode> = {
+  sparkles: <><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /><path d="M20 2v4" /><path d="M22 4h-4" /><circle cx="4" cy="20" r="2" /></>,
   briefcase: <><rect x="3" y="7" width="18" height="13" rx="2" /><path d="M8 7V4h8v3M3 12h18" /></>,
   book: <><path d="M4 4h6a2 2 0 0 1 2 2v15a3 3 0 0 0-3-3H4ZM20 4h-6a2 2 0 0 0-2 2v15a3 3 0 0 1 3-3h5Z" /></>,
-  bag: <><path d="M5 8h14l-1 13H6ZM9 8a3 3 0 0 1 6 0" /></>,
-  coffee: <><path d="M4 8h13v8a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4ZM17 10h2a2 2 0 0 1 0 4h-2M8 4v2M12 4v2" /></>,
-  compass: <><circle cx="12" cy="12" r="9" /><path d="m15 9-2 4-4 2 2-4Z" /></>,
-  more: <><circle cx="5" cy="12" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /></>,
-  home: <><path d="m3 11 9-8 9 8M5 10v10h14V10M9 20v-6h6v6" /></>,
-  folder: <path d="M3 6h7l2 2h9v11H3Z" />,
-  info: <><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7h.01" /></>,
-  user: <><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></>,
-  arrow: <><path d="M5 12h14" /><path d="m14 7 5 5-5 5" /></>,
-  upRight: <><path d="M7 17 17 7M8 7h9v9" /></>,
-  leaf: <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />,
-  check: <path d="m6 12 4 4 8-8" />,
-  spark: <path d="m12 3 1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5Z" />,
-  bolt: <path d="M13 2 3 14h7l-1 8 10-12h-7Z" />,
-  brain: <><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z" /><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z" /></>,
-  shield: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />,
-  target: <><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1" /></>,
-  clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>,
+  home: <><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" /><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></>,
+  dice: <><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M16 8h.01M8 8h.01M8 16h.01M16 16h.01M12 12h.01" /></>,
+  brain: <><path d="M12 18V5" /><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /><path d="M17.707 6.294A3 3 0 1 0 12 5a3 3 0 1 0-5.707 1.294" /><path d="M17.996 5.125a4 4 0 0 1 2.526 5.77" /><path d="M18 18a4 4 0 0 0 2-7.465" /><path d="M19.967 17.482a4 4 0 1 1-7.967.517 4 4 0 1 1-7.967-.517" /><path d="M6 18a4 4 0 0 1-2-7.465" /><path d="M6.004 5.125a4 4 0 0 0-2.526 5.77" /></>,
+  fileText: <><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" /><path d="M14 2v5a1 1 0 0 0 1 1h5" /><path d="M10 9H8M16 13H8M16 17H8" /></>,
+  wand: <><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72" /><path d="m14 7 3 3" /><path d="M5 6v4M19 14v4M10 2v2M7 8H3M21 16h-4M11 3H9" /></>,
+  arrow: <><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></>,
+  bot: <><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2M20 14h2M15 13v2M9 13v2" /></>,
   lock: <><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></>,
-  shieldCheck: <><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" /><path d="m9 12 2 2 4-4" /></>,
 };
 function Ico({ name, size = 20 }: { name: string; size?: number }) {
   return (
-    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">
-      {iconPaths[name] ?? iconPaths.more}
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {iconPaths[name] ?? iconPaths.sparkles}
     </svg>
   );
 }
 
-const scenes: { icon: string; title: string; desc: string; prompt: string }[] = [
+const templates = [
   {
     icon: "briefcase",
     title: "实习 / 工作",
-    desc: "比较 offer、选公司、跳槽决策",
+    desc: "Offer 对比、跳槽选择",
     prompt: "我在比较两份实习或工作机会。\n选项 A 的已知情况：\n选项 B 的已知情况：\n我最在意：\n不能妥协的条件：",
+    gradient: "from-pop-pink to-pop-pink-dark",
   },
   {
     icon: "book",
     title: "升学 / 研究",
-    desc: "选学校、选方向、考研留学",
+    desc: "考研、留学、读博",
     prompt: "我在考虑升学或研究方向的选择。\n选项 A：\n选项 B：\n我的基础和目标：\n时间或其他限制：",
+    gradient: "from-pop-cyan to-pop-cyan-dark",
   },
   {
-    icon: "compass",
-    title: "其他决定",
-    desc: "买房、搬家、创业等重大选择",
-    prompt: "我正在纠结的决定是：\n目前考虑的选择：\n各自已经知道的情况：\n我最在意：",
+    icon: "home",
+    title: "生活 / 财务",
+    desc: "买房、投资、大额消费",
+    prompt: "我正在纠结一个生活中的重大决定。\n目前考虑的选择：\n各自已经知道的情况：\n我最在意：\n不能妥协的条件：",
+    gradient: "from-pop-green to-pop-green-dark",
   },
 ];
 
 const steps = [
-  { icon: "pencil", num: "1", title: "描述选择", desc: "写下你知道的情况，AI 帮你梳理选项和标准" },
-  { icon: "target", num: "2", title: "确认标准", desc: "区分底线和偏好，补充问题可跳过" },
-  { icon: "sparkles", num: "3", title: "阅读报告", desc: "看清取舍与待核实信息，可随时修改重新分析" },
-];
-
-const features = [
-  { icon: "brain", title: "AI 深度分析", desc: "从多个视角拆解你的决策，识别关键因素" },
-  { icon: "shieldCheck", title: "本地存储", desc: "所有记录仅保存在你的浏览器，不上传云端" },
-  { icon: "clock", title: "快速梳理", desc: "3 步完成决策分析，几分钟看清取舍" },
+  { num: "1", title: "描述你的选择", desc: "写下你知道的情况，AI 帮你结构化拆解" },
+  { num: "2", title: "确认你的标准", desc: "区分底线和偏好，补充问题可以跳过" },
+  { num: "3", title: "看报告做决定", desc: "推荐方案 + 成立前提 + 切换条件，明明白白" },
 ];
 
 export function HomeScreen() {
   const s = useDecision();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [tab, setTab] = useState<"home" | "history" | "info">(
-    searchParams.get("tab") === "history" ? "history" : searchParams.get("tab") === "info" ? "info" : "home",
-  );
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
-  useEffect(() => {
-    const t = searchParams.get("tab");
-    if (t === "history" || t === "info") setTab(t);
-    else setTab("home");
-  }, [searchParams]);
+
   async function start() {
     if (await s.run("parse")) router.push("/confirm");
   }
+
+  function useTemplate(prompt: string) {
+    s.setDraft((d) => ({ ...d, raw: prompt }));
+    s.setError("");
+    inputRef.current?.focus();
+    inputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
   return (
     <Shell isHome>
-      {tab === "home" ? (
-        <>
-          <section className="hero">
-            <div className="eyebrow">
-              <Ico name="spark" size={16} /> AI 决策分析 · 让选择更清晰
-            </div>
-            <h1>
-              你在纠结<span className="gradient-rainbow">什么决定</span>？
-            </h1>
-            <p>先明确不能妥协的条件，再比较你愿意付出的代价。决定由你，AI 只是帮你想清楚。</p>
-            <div className="stats">
-              <div className="stat"><b>3</b><small>步出报告</small></div>
-              <div className="stat"><b>∞</b><small>视角分析</small></div>
-              <div className="stat"><b>🔒</b><small>本地存储</small></div>
-            </div>
-          </section>
+      <section className="text-center mb-10 max-w-3xl mx-auto mt-4">
+        <div className="inline-flex items-center gap-2 px-5 py-2 bg-white border-2 border-ink-900 rounded-full mb-8" style={{ boxShadow: "3px 3px 0 #1a1a2e" }}>
+          <Ico name="sparkles" size={16} />
+          <span className="text-sm font-semibold text-ink-800">AI 决策助手</span>
+        </div>
+        <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+          <span className="scribble-underline">纠结选哪个？</span>
+          <br />
+          <span className="gradient-rainbow">让 AI 帮你想清楚！</span>
+        </h1>
+        <p className="text-lg text-ink-600 max-w-xl mx-auto">
+          把你的选择告诉 AI，它会帮你拆解标准、分析利弊，
+          <br className="hidden md:block" />还给你推荐方案 + 前提条件 + 切换条件
+        </p>
+      </section>
 
-          <div className="card prompt-card">
-            <label className="field-label" htmlFor="decision-question">描述你的问题</label>
-            <textarea
-              id="decision-question"
-              ref={inputRef}
-              aria-describedby="question-counter"
-              value={s.draft.raw}
-              disabled={!!s.busy || !s.ready}
-              maxLength={2000}
-              onChange={(e) => {
-                s.setDraft((d) => ({ ...d, raw: e.target.value }));
-                s.setError("");
-              }}
-              placeholder="比如：我应该选择 A 公司还是 B 公司的实习？"
-            />
-            <div className="counter" id="question-counter">
-              <span>至少 10 字</span>
-              <span>{s.draft.raw.length}/2000</span>
-            </div>
-          </div>
+      <div className="flex flex-wrap justify-center gap-4 mb-10">
+        <div className="flex items-center gap-3 px-5 py-3 bg-white border-2 border-ink-900 rounded-2xl" style={{ boxShadow: "4px 4px 0 #1a1a2e" }}>
+          <div><div className="text-2xl font-bold gradient-rainbow">∞</div><div className="text-xs text-ink-600">种可能性</div></div>
+        </div>
+        <div className="flex items-center gap-3 px-5 py-3 bg-white border-2 border-ink-900 rounded-2xl" style={{ boxShadow: "4px 4px 0 #1a1a2e" }}>
+          <div><div className="text-2xl font-bold gradient-rainbow">3</div><div className="text-xs text-ink-600">步想清楚</div></div>
+        </div>
+        <div className="flex items-center gap-3 px-5 py-3 bg-white border-2 border-ink-900 rounded-2xl" style={{ boxShadow: "4px 4px 0 #1a1a2e" }}>
+          <div><div className="text-2xl font-bold gradient-rainbow">0</div><div className="text-xs text-ink-600">遗憾率</div></div>
+        </div>
+      </div>
 
-          <div style={{ marginBottom: 16 }}>
-            <SubmitButton onClick={start} busy={!!s.busy || !s.ready}>
+      <div className="w-full max-w-2xl mx-auto">
+        <div className="card-pop p-8 transition-all duration-300">
+          <label className="block text-base font-semibold text-ink-800 mb-4">告诉我你在纠结什么</label>
+          <textarea
+            ref={inputRef}
+            placeholder="比如：跳槽去创业公司还是留在大厂？"
+            className="w-full bg-transparent text-ink-900 placeholder-ink-400 text-lg resize-none outline-none min-h-[100px]"
+            maxLength={2000}
+            value={s.draft.raw}
+            disabled={!!s.busy || !s.ready}
+            onChange={(e) => { s.setDraft((d) => ({ ...d, raw: e.target.value })); s.setError(""); }}
+          />
+          <div className="flex items-center justify-between mt-4 pt-4 border-t-2 border-ink-100">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-ink-500">{s.draft.raw.length}/2000 字</span>
+            </div>
+            <button
+              className="btn-pop btn-pop-pink px-8 py-3 font-bold flex items-center gap-2"
+              disabled={!!s.busy || !s.ready || s.draft.raw.length < 10}
+              onClick={start}
+            >
+              <Ico name="wand" size={20} />
               {s.error ? "重试梳理" : "帮我梳理"}
-            </SubmitButton>
+              <Ico name="arrow" size={20} />
+            </button>
           </div>
-
-          <p className="privacy-note">
-            <Ico name="lock" size={14} />
-            内容仅用于本次分析。避免填写姓名、联系方式等不必要的个人信息。
+          <p className="text-xs text-ink-500 mt-4 flex items-center gap-1.5">
+            <Ico name="lock" size={14} /> 仅保存在你的浏览器，不会上传到服务器
           </p>
+        </div>
+      </div>
 
-          <h2 className="section-title">从你的选择开始</h2>
-          <p className="section-subtitle">点击模板快速开始，也可以自由描述</p>
-          <div className="scene-grid">
-            {scenes.map((sc) => (
-              <button
-                key={sc.title}
-                className="scene-card"
-                disabled={!!s.busy}
-                onClick={() => {
-                  s.setDraft((d) => ({ ...d, raw: sc.prompt }));
-                  s.setError("");
-                  inputRef.current?.focus();
-                  inputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-                }}
-              >
-                <div className="icon"><Ico name={sc.icon} size={26} /></div>
-                <div>
-                  <h3>{sc.title}</h3>
-                  <p>{sc.desc}</p>
-                </div>
-                <span className="use">使用模板 →</span>
-              </button>
-            ))}
-          </div>
-
-          <h2 className="section-title">三步完成决策分析</h2>
-          <p className="section-subtitle">清晰的流程，让你不遗漏任何关键因素</p>
-          <div className="scene-grid">
+      <div className="w-full max-w-3xl mx-auto mt-16">
+        <div className="card-pop-yellow p-8">
+          <h3 className="text-xl font-bold text-ink-900 mb-6 flex items-center gap-2">
+            <Ico name="bot" size={24} /> 只需三步，想清楚再选
+          </h3>
+          <div className="space-y-6">
             {steps.map((st) => (
-              <div key={st.num} className="card" style={{ padding: 20, textAlign: "left" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                  <span className="letter">{st.num}</span>
-                  <Ico name={st.icon} size={20} />
+              <div key={st.num} className="flex gap-4 items-start">
+                <div className="w-12 h-12 rounded-2xl bg-white border-2 border-ink-900 flex items-center justify-center text-lg font-bold flex-shrink-0" style={{ boxShadow: "3px 3px 0 #1a1a2e" }}>
+                  {st.num}
                 </div>
-                <h3 style={{ fontSize: 17, fontWeight: 700, color: "var(--ink)" }}>{st.title}</h3>
-                <p style={{ fontSize: 13, color: "var(--muted)", marginTop: 4 }}>{st.desc}</p>
+                <div className="pt-1">
+                  <p className="font-bold text-ink-900 text-lg">第 {st.num} 步 · {st.title}</p>
+                  <p className="text-ink-700">{st.desc}</p>
+                </div>
               </div>
             ))}
           </div>
+        </div>
+      </div>
 
-          <h2 className="section-title">为什么选择 NextStep？</h2>
-          <div className="scene-grid">
-            {features.map((f) => (
-              <div key={f.title} className="card-pop-yellow" style={{ padding: 20, textAlign: "left" }}>
-                <div style={{ width: 48, height: 48, borderRadius: 14, background: "var(--pop-yellow)", display: "grid", placeItems: "center", marginBottom: 12 }}>
-                  <Ico name={f.icon} size={24} />
-                </div>
-                <h3 style={{ fontSize: 16, fontWeight: 700 }}>{f.title}</h3>
-                <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>{f.desc}</p>
+      <div className="w-full max-w-4xl mx-auto mt-20">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-ink-900 mb-2">从一个模板开始</h2>
+          <p className="text-ink-600">不知道怎么描述？点一下就填好</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {templates.map((t) => (
+            <button key={t.title} className="card-pop p-6 text-left" onClick={() => useTemplate(t.prompt)}>
+              <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${t.gradient} flex items-center justify-center mb-4`}>
+                <Ico name={t.icon} size={28} />
               </div>
-            ))}
+              <h3 className="text-xl font-bold text-ink-900 mb-1">{t.title}</h3>
+              <p className="text-sm text-ink-600">{t.desc}</p>
+              <div className="mt-4 flex items-center gap-1 text-pop-pink text-sm font-medium">
+                一键使用 <Ico name="arrow" size={16} />
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="w-full max-w-4xl mx-auto mt-20">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-ink-900 mb-2">更多功能</h2>
+          <p className="text-ink-600">做决策也可以很有趣</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <a href="/dice">
+            <div className="card-pop-yellow p-6 cursor-pointer">
+              <Ico name="dice" size={32} />
+              <h3 className="text-lg font-bold text-ink-900 mb-1 mt-3">决策骰子</h3>
+              <p className="text-sm text-ink-700">纠结到爆？让命运帮你选</p>
+            </div>
+          </a>
+          <a href="/">
+            <div className="card-pop-pink p-6 cursor-pointer">
+              <Ico name="brain" size={32} />
+              <h3 className="text-lg font-bold text-ink-900 mb-1 mt-3">AI 深度分析</h3>
+              <p className="text-sm text-ink-700">结构化拆解你的决策</p>
+            </div>
+          </a>
+          <a href="/history">
+            <div className="card-pop-green p-6 cursor-pointer">
+              <Ico name="fileText" size={32} />
+              <h3 className="text-lg font-bold text-ink-900 mb-1 mt-3">历史记录</h3>
+              <p className="text-sm text-ink-700">查看你过往的决策分析</p>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div className="w-full max-w-2xl mx-auto mt-20">
+        <div className="text-center">
+          <div className="inline-block px-6 py-3 bg-white border-2 border-dashed border-pop-purple rounded-2xl">
+            <p className="text-sm text-ink-700">
+              <span className="text-pop-purple font-bold">冷知识：</span>研究显示，把选择写下来能提升 30% 的决策质量
+            </p>
           </div>
-        </>
-      ) : tab === "history" ? (
-        <>
-          <header className="simple-header">
-            <h1>决策记录</h1>
-            <p>保存下来的每一次认真思考。</p>
-          </header>
-          {s.history.length === 0 ? (
-            <div className="empty-hint">
-              <Ico name="folder" size={28} />
-              <span>还没有保存的报告</span>
-              <button className="button small" onClick={() => router.push("/")} style={{ marginTop: 14 }}>返回首页</button>
-            </div>
-          ) : (
-            <div className="project-list">
-              {s.history.map((h) => (
-                <div className="card project-card" key={h.id}>
-                  <div>
-                    <span className={`tag ${h.mode === "demo" ? "pink" : ""}`}>
-                      {h.mode === "demo" ? "示例" : "AI 分析"}
-                    </span>
-                    <small>{new Date(h.createdAt).toLocaleDateString("zh-CN")}</small>
-                  </div>
-                  <h2>{h.decision.title}</h2>
-                  {(() => {
-                    const recId = "recommendedOptionId" in h.report ? h.report.recommendedOptionId : null;
-                    if (!recId) return null;
-                    const optName = h.decision.options.find((o) => o.id === recId)?.name ?? "—";
-                    return <p className="history-rec">💡 推荐：{optName}</p>;
-                  })()}
-                  <div>
-                    <button onClick={() => { s.openReport(h); router.push("/report"); }}>
-                      打开报告 <Ico name="arrow" size={15} />
-                    </button>
-                    <button aria-label="删除" onClick={() => setDeleteId(h.id)}>
-                      <svg viewBox="0 0 24 24" width={15} height={15}><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13" /></svg>
-                    </button>
-                  </div>
-                  {deleteId === h.id && (
-                    <div className="notice" style={{ marginTop: 12 }}>
-                      <div>
-                        <b>删除后无法恢复</b>
-                        <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-                          <button className="button small outline" onClick={() => setDeleteId(null)}>取消</button>
-                          <button className="button small" onClick={() => { s.removeReport(h.id); setDeleteId(null); }}>确认删除</button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </>
-      ) : (
-        <ProfileScreen />
-      )}
+        </div>
+      </div>
+
+      <div className="w-full max-w-xl mx-auto mt-20 text-center">
+        <div className="card-pop-pink p-8">
+          <h3 className="text-2xl font-bold text-ink-900 mb-2">准备好做一个不后悔的决定了吗？</h3>
+          <p className="text-ink-700 mb-6">现在就开始，让 AI 帮你想清楚</p>
+          <button className="btn-pop btn-pop-yellow px-8 py-4 font-bold text-lg" onClick={() => inputRef.current?.focus()}>
+            <span className="flex items-center gap-2">
+              <Ico name="wand" size={20} /> 开始我的决策
+            </span>
+          </button>
+        </div>
+      </div>
     </Shell>
   );
 }

@@ -62,7 +62,8 @@ export function Shell({
               Next<span>Step</span>
             </Link>
             <div className="nav-links">
-              <Link className="nav-link primary" href="/?tab=history">📒 历史记录</Link>
+              <Link className="nav-link primary" href="/dice">🎲 决策骰子</Link>
+              <Link className="nav-link" href="/history">📒 历史记录</Link>
             </div>
           </header>
         )}
