@@ -30,7 +30,12 @@ export function Shell({
   backHref?: string;
   isHome?: boolean;
 }) {
-  const { draft, error, notice, storageWarning, busy } = useDecision();
+  const { draft, error, notice, storageWarning, busy, setNotice } = useDecision();
+  useEffect(() => {
+    if (!notice) return;
+    const t = setTimeout(() => setNotice(""), 3000);
+    return () => clearTimeout(t);
+  }, [notice, setNotice]);
   useEffect(() => {
     if (error || busy) {
       window.scrollTo({ top: 0, behavior: "smooth" });
