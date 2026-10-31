@@ -463,11 +463,11 @@ select.input { appearance: none; background-image: linear-gradient(45deg, transp
 .report-nav-btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
 .report-nav-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: 3px 3px 0 var(--ink); }
 
-.report-tabs-wrap { position: sticky; top: 56px; z-index: 40; padding-top: 64px; display: flex; justify-content: center; }
-.report-tabs { display: inline-flex; gap: 4px; padding: 6px; background: #fff; border: 3px solid var(--ink); border-radius: 16px; box-shadow: 4px 4px 0 var(--ink); }
-.report-tab { display: flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 12px; font-size: 14px; font-weight: 600; color: var(--ink-700); text-decoration: none; transition: all .15s; border: none; background: transparent; cursor: pointer; }
+.report-tabs-wrap { display: flex; justify-content: center; margin-bottom: 32px; }
+.report-tabs { display: inline-flex; gap: 4px; padding: 6px; background: var(--ink); border-radius: 999px; box-shadow: 4px 4px 0 var(--ink); }
+.report-tab { display: flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 999px; font-size: 14px; font-weight: 600; color: #fff; text-decoration: none; transition: all .15s; border: none; background: transparent; cursor: pointer; }
 .report-tab.active { background: var(--pop-pink); color: #fff; border: 2px solid var(--pop-pink-dark); box-shadow: 3px 3px 0 var(--pop-pink-dark); padding: 6px 16px; }
-.report-tab:not(.active):hover { background: var(--ink-100); }
+.report-tab:not(.active):hover { background: rgba(255,255,255,0.15); }
 
 /* ===== Animations ===== */
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }

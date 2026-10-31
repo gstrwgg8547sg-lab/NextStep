@@ -4,7 +4,7 @@ import { ReportFeedback } from "./report-feedback";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Shell, SubmitButton } from "./shell";
-import { ReportAction, sourceNames } from "./report-layout";
+import { ReportAction, ReportTabs, sourceNames } from "./report-layout";
 import { priorityNames } from "./criteria-editor";
 import { useDecision } from "./decision-provider";
 import { getFeasibility, unknownImpact } from "@/lib/schema";
@@ -49,6 +49,8 @@ export function ModernSummary({ saved, report: r }: Props) {
               <span>{new Date(saved.createdAt).toLocaleDateString("zh-CN")}</span>
             </div>
           </div>
+
+          <ReportTabs />
 
           <section className="relative card-pop-purple p-8 mb-6 overflow-hidden">
             <div className="absolute -top-10 -right-10 w-40 h-40 bg-pop-yellow/20 rounded-full blur-2xl" />
@@ -282,6 +284,8 @@ export function ModernComparison({ saved, report: r }: Props) {
               按你确认的重要程度排列。未知信息不当作优势。
             </p>
           </div>
+
+          <ReportTabs />
 
           <section className="card-pop-cyan p-6 mb-6 overflow-x-auto">
             <h3 className="font-bold text-ink-900 mb-2">方案对比一览</h3>
@@ -555,6 +559,8 @@ export function ModernUnknowns({ saved, report: r }: Props) {
               按影响选择的重要程度排列。核实后填入结果，再更新报告。
             </p>
           </div>
+
+          <ReportTabs />
 
           <fieldset className="contents" disabled={!!s.busy}>
             <div className="space-y-8 mb-8">
