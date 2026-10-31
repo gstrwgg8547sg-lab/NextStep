@@ -10,6 +10,7 @@ function Ico({ name, size = 20 }: { name: string; size?: number }) {
     arrow: <><path d="M5 12h14" /><path d="m14 7 5 5-5 5" /></>,
     trash: <><path d="M3 6h18" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><path d="M10 11v6M14 11v6" /></>,
     folder: <path d="M3 6h7l2 2h9v11H3Z" />,
+    home: <><path d="M3 9.5 12 3l9 6.5" /><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10" /></>,
   };
   return <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{paths[name] ?? paths.folder}</svg>;
 }
@@ -24,6 +25,9 @@ export function HistoryScreen() {
       <header className="simple-header">
         <h1>决策记录</h1>
         <p>保存下来的每一次认真思考。</p>
+        <Link href="/" className="btn-pop inline-flex items-center gap-2 mt-4">
+          <Ico name="home" size={16} /> 返回首页
+        </Link>
       </header>
       {s.history.length === 0 ? (
         <div className="empty-hint">
