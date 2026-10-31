@@ -1,5 +1,18 @@
 "use client";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
+import {
+  Sparkles,
+  Lightbulb,
+  CircleCheck,
+  CircleX,
+  Shield,
+  AlertTriangle,
+  OctagonAlert,
+  ArrowUpDown,
+  Info,
+  ChevronDown,
+  Plus,
+} from "lucide-react";
 import { ReportFeedback } from "./report-feedback";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -57,8 +70,9 @@ export function ModernSummary({ saved, report: r }: Props) {
             <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-pop-pink/20 rounded-full blur-2xl" />
             <div className="relative">
               <div className="flex items-center gap-2 mb-4">
+                <Sparkles className="w-5 h-5 text-pop-purple-dark" />
                 <span className="text-sm font-semibold text-pop-purple-dark">
-                  ✨ 推荐方案
+                  推荐方案
                 </span>
               </div>
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -78,7 +92,7 @@ export function ModernSummary({ saved, report: r }: Props) {
             <section className="card-pop-yellow p-6 mb-6">
               <h3 className="text-lg font-bold text-ink-900 mb-6 flex items-center gap-2">
                 <span className="w-8 h-8 rounded-lg bg-pop-yellow-light flex items-center justify-center">
-                  💡
+                  <Lightbulb className="w-4 h-4 text-pop-yellow-dark" />
                 </span>
                 这次选择，真正的取舍
               </h3>
@@ -86,7 +100,7 @@ export function ModernSummary({ saved, report: r }: Props) {
                 <div className="card-pop-green p-5">
                   <div className="flex items-center gap-2 mb-3">
                     <div className="w-6 h-6 rounded-full bg-pop-green-light flex items-center justify-center">
-                      <span className="text-xs">🟢</span>
+                      <CircleCheck className="w-3 h-3 text-pop-green-dark" />
                     </div>
                     <span className="text-sm font-semibold text-pop-green-dark">
                       得到什么
@@ -99,7 +113,7 @@ export function ModernSummary({ saved, report: r }: Props) {
                 <div className="card-pop-pink p-5">
                   <div className="flex items-center gap-2 mb-3">
                     <div className="w-6 h-6 rounded-full bg-pop-pink-light flex items-center justify-center">
-                      <span className="text-xs">🌸</span>
+                      <CircleX className="w-3 h-3 text-pop-pink-dark" />
                     </div>
                     <span className="text-sm font-semibold text-pop-pink-dark">
                       付出什么
@@ -297,7 +311,7 @@ export function ModernComparison({ saved, report: r }: Props) {
 
           <section className="card-pop-pink p-6 mb-6">
             <div className="flex items-center gap-2 mb-4">
-              <span className="w-5 h-5 text-pop-pink-dark">⚠️</span>
+              <Shield className="w-5 h-5 text-pop-pink-dark" />
               <h3 className="font-bold text-ink-900">哪些方案目前可行？</h3>
             </div>
             <div className="grid md:grid-cols-2 gap-4">
@@ -384,7 +398,7 @@ export function ModernComparison({ saved, report: r }: Props) {
                           <span className="chip-pop-pink text-[10px]">底线</span>
                         )}
                       </div>
-                      <span className={`transition-transform ${isOpen ? "rotate-180" : ""}`}>▼</span>
+                      <ChevronDown className={`w-5 h-5 text-ink-500 transition-transform ${isOpen ? "rotate-180" : ""}`} />
                     </button>
                     {isOpen && row && (
                       <div className="px-4 pb-4 pt-0 space-y-3">
@@ -423,7 +437,7 @@ export function ModernComparison({ saved, report: r }: Props) {
 
           <section className="card-pop-purple p-6 mb-8">
             <div className="flex items-center gap-2 mb-6">
-              <span className="w-5 h-5 text-pop-purple-dark">⚖️</span>
+              <AlertTriangle className="w-5 h-5 text-pop-purple-dark" />
               <h3 className="font-bold text-ink-900">每个选择，也有代价</h3>
             </div>
             <div className="space-y-3">
@@ -436,20 +450,20 @@ export function ModernComparison({ saved, report: r }: Props) {
                       className="w-full p-4 flex items-center justify-between text-left"
                     >
                       <span className="font-semibold text-ink-900">{name(t.optionId)}</span>
-                      <span className={`transition-transform ${isOpen ? "rotate-180" : ""}`}>▼</span>
+                      <ChevronDown className={`w-5 h-5 text-ink-500 transition-transform ${isOpen ? "rotate-180" : ""}`} />
                     </button>
                     {isOpen && (
                       <div className="px-4 pb-4 pt-0 space-y-4">
                         <div className="grid grid-cols-2 gap-3">
                           <div className="bg-pop-pink-light rounded-xl p-4 border-2 border-pop-pink">
                             <p className="text-xs text-pop-pink-dark mb-1 flex items-center gap-1 font-semibold">
-                              ⚠️ 主要风险
+                              <AlertTriangle className="w-3 h-3" /> 主要风险
                             </p>
                             <p className="text-sm text-ink-700">{t.risk}</p>
                           </div>
                           <div className="bg-pop-purple-light rounded-xl p-4 border-2 border-pop-purple">
                             <p className="text-xs text-pop-purple-dark mb-1 flex items-center gap-1 font-semibold">
-                              💸 机会成本
+                              <CircleX className="w-3 h-3" /> 机会成本
                             </p>
                             <p className="text-sm text-ink-700">{t.opportunityCost}</p>
                           </div>
@@ -490,31 +504,31 @@ export function ModernUnknowns({ saved, report: r }: Props) {
 
   const impactConfig: Record<
     string,
-    { label: string; color: string; cardClass: string; icon: string }
+    { label: string; color: string; cardClass: string; icon: ReactNode }
   > = {
     blocking: {
       label: "影响能否选择 · 优先核实",
       color: "text-pop-pink-dark",
       cardClass: "card-pop-pink",
-      icon: "🔴",
+      icon: <OctagonAlert className="w-4 h-4 text-pop-pink-dark" />,
     },
     ranking: {
       label: "可能改变排序 · 不必全部等齐",
       color: "text-pop-purple-dark",
       cardClass: "card-pop-purple",
-      icon: "🟡",
+      icon: <ArrowUpDown className="w-4 h-4 text-pop-purple-dark" />,
     },
     detail: {
       label: "补充细节 · 不阻塞当前判断",
       color: "text-pop-cyan-dark",
       cardClass: "card-pop-cyan",
-      icon: "🔵",
+      icon: <Info className="w-4 h-4 text-pop-cyan-dark" />,
     },
     unclassified: {
       label: "历史记录 · 未分级",
       color: "text-ink-500",
       cardClass: "card-pop",
-      icon: "⚪",
+      icon: <Info className="w-4 h-4 text-ink-500" />,
     },
   };
 
@@ -571,7 +585,7 @@ export function ModernUnknowns({ saved, report: r }: Props) {
                 return (
                   <div key={key}>
                     <div className="flex items-center gap-2 mb-4">
-                      <span className={`w-4 h-4 ${cfg.color}`}>{cfg.icon}</span>
+                      {cfg.icon}
                       <span className={`text-sm font-bold ${cfg.color}`}>
                         {cfg.label}
                       </span>
@@ -601,7 +615,7 @@ export function ModernUnknowns({ saved, report: r }: Props) {
                                 <span
                                   className={`flex-shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`}
                                 >
-                                  ▼
+                                  <ChevronDown className="w-5 h-5 text-ink-500" />
                                 </span>
                               </div>
                             </button>
@@ -651,7 +665,7 @@ export function ModernUnknowns({ saved, report: r }: Props) {
             {r.unknowns.length === 0 && (
               <div className="card-pop-green p-12 text-center mb-8">
                 <div className="w-16 h-16 rounded-full bg-pop-green-light flex items-center justify-center mx-auto mb-4 border-2 border-pop-green">
-                  <span className="text-3xl">✓</span>
+                  <CircleCheck className="w-8 h-8 text-pop-green-dark" />
                 </div>
                 <h3 className="text-lg font-bold text-ink-900 mb-2">
                   当前信息已足够支撑判断
@@ -729,7 +743,7 @@ export function ModernUnknowns({ saved, report: r }: Props) {
                         }
                         className={`chip-pop-yellow text-sm flex items-center gap-1 ${maxed ? "opacity-50 cursor-not-allowed" : ""}`}
                       >
-                        <span>+</span>
+                        <Plus className="w-3 h-3" />
                         {f.name}
                       </button>
                     );
