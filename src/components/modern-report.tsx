@@ -35,17 +35,16 @@ export function ModernSummary({ saved, report: r }: Props) {
             条件已修改，当前仍是上次报告。请重新分析以更新判断。
           </div>
         )}
-        <header className="report-heading result-context">
-          <p>{saved.decision.title}</p>
+        <header className="report-hero">
+          <h1>{saved.decision.title}</h1>
           <small>
-            {saved.decision.depth === "quick" ? "简明分析" : "补充影响分析"} ·{" "}
+            {saved.decision.depth === "quick" ? "简明分析" : "深度分析"} ·{" "}
             {new Date(saved.createdAt).toLocaleDateString("zh-CN")}
           </small>
         </header>
-        <section className="card recommendation compact-recommendation">
-          <small>
-            {selected ? "推荐方案" : noneFeasible ? "底线检查" : "判断仍有缺口"}
-          </small>
+
+        <section className="card recommendation report-rec-card">
+          <small className="rec-label">✨ 推荐方案</small>
           <h1 className="result-title">
             {selected
               ? selected.name
@@ -55,25 +54,28 @@ export function ModernSummary({ saved, report: r }: Props) {
           </h1>
           <p>{r.conclusion}</p>
         </section>
+
         {r.exchange ? (
-          <section className="card plain-card exchange-card">
-            <h2 className="section-title">这次选择，真正的取舍</h2>
-            <p>
-              <b>得到什么</b>
-              {r.exchange.gain}
-            </p>
-            <p>
-              <b>付出什么</b>
-              {r.exchange.cost}
-            </p>
-            <p>
-              <b>如何对应你的优先级</b>
-              {r.exchange.why}
+          <section className="card report-exchange-card">
+            <h2 className="exchange-title">💡 这次选择，真正的取舍</h2>
+            <div className="exchange-grid">
+              <div className="exchange-sub gain">
+                <h3>🟢 得到什么</h3>
+                <p>{r.exchange.gain}</p>
+              </div>
+              <div className="exchange-sub cost">
+                <h3>🌸 付出什么</h3>
+                <p>{r.exchange.cost}</p>
+              </div>
+            </div>
+            <p className="exchange-why">
+              <b>如何对应你的优先级：</b>{r.exchange.why}
             </p>
           </section>
         ) : (
           <p className="report-footnote">{r.summary}</p>
         )}
+
         <Feasibility report={r} saved={saved} />
 
         {revision && (
@@ -92,6 +94,7 @@ export function ModernSummary({ saved, report: r }: Props) {
             <p>本次判断依据见下方。输入变化不等同于已证明的因果关系。</p>
           </section>
         )}
+
         <h2 className="section-title">关键标准与依据</h2>
         <div className="card report-reasons">
           {r.reasons.map((x, i) => (
@@ -117,6 +120,7 @@ export function ModernSummary({ saved, report: r }: Props) {
             </details>
           ))}
         </div>
+
         {!!r.prerequisites.length && (
           <section className="card plain-card">
             <h2 className="section-title">结论成立的前提</h2>
@@ -125,6 +129,7 @@ export function ModernSummary({ saved, report: r }: Props) {
             ))}
           </section>
         )}
+
         {!!r.switchConditions.length && (
           <details className="card plain-card report-disclosure">
             <summary>什么情况下会改变选择？</summary>
@@ -133,11 +138,13 @@ export function ModernSummary({ saved, report: r }: Props) {
             ))}
           </details>
         )}
+
         {!selected && (
           <Link className="text-button" href="/report/factors">
             先看最需要核实的信息 →
           </Link>
         )}
+
         <p className="report-footnote">
           基于你确认的信息，未经外部事实核实。不使用虚构评分或置信度。
         </p>
@@ -167,10 +174,10 @@ export function ModernComparison({ saved, report: r }: Props) {
             条件已修改，当前仍是上次报告。请重新分析以更新判断。
           </div>
         )}
-        <div className="intro">
+        <header className="report-hero">
           <h1>先看底线，再看差异</h1>
-          <p>按你确认的重要程度排列。未知信息不当作优势。</p>
-        </div>
+          <small>按你确认的重要程度排列。未知信息不当作优势。</small>
+        </header>
         <ComparisonMatrix report={r} saved={saved} />
         <Feasibility report={r} saved={saved} />
         {criteria.map((c) => {
@@ -268,10 +275,10 @@ export function ModernUnknowns({ saved, report: r }: Props) {
   return (
     <Shell step={3}>
       <div className="modern-report">
-        <div className="intro">
+        <header className="report-hero">
           <h1>先确认，最关键的事</h1>
-          <p>按影响选择的重要程度排列。核实后填入结果，再更新报告。</p>
-        </div>
+          <small>按影响选择的重要程度排列。核实后填入结果，再更新报告。</small>
+        </header>
         {changed && (
           <div className="notice">
             信息已修改，下方仍是上次报告。重新分析后更新。

@@ -26,9 +26,8 @@ export function ReportSummaryScreen() {
   const prerequisite = r.reasons.find((x) => x.source === "unknown");
   return (
     <Shell step={3}>
-      <header className="report-heading">
-        <p>{saved.decision.title}</p>
-        <h1>先看清，再决定。</h1>
+      <header className="report-hero">
+        <h1>{saved.decision.title}</h1>
         <small>{new Date(saved.createdAt).toLocaleDateString("zh-CN")}</small>
       </header>
       <section className="card recommendation compact-recommendation">
