@@ -25,9 +25,6 @@ export function HistoryScreen() {
       <header className="simple-header">
         <h1>决策记录</h1>
         <p>保存下来的每一次认真思考。</p>
-        <Link href="/" className="btn-pop inline-flex items-center gap-2 mt-4">
-          <Ico name="home" size={16} /> 返回首页
-        </Link>
       </header>
       {s.history.length === 0 ? (
         <div className="empty-hint">
@@ -36,44 +33,51 @@ export function HistoryScreen() {
           <Link href="/" className="button small" style={{ marginTop: 14 }}>返回首页</Link>
         </div>
       ) : (
-        <div className="project-list">
-          {s.history.map((h) => (
-            <div className="card project-card" key={h.id}>
-              <div>
-                <span className={`tag ${h.mode === "demo" ? "pink" : ""}`}>
-                  {h.mode === "demo" ? "示例" : "AI 分析"}
-                </span>
-                <small>{new Date(h.createdAt).toLocaleDateString("zh-CN")}</small>
-              </div>
-              <h2>{h.decision.title}</h2>
-              {(() => {
-                const recId = "recommendedOptionId" in h.report ? h.report.recommendedOptionId : null;
-                if (!recId) return null;
-                const optName = h.decision.options.find((o) => o.id === recId)?.name ?? "—";
-                return <p className="history-rec">💡 推荐：{optName}</p>;
-              })()}
-              <div>
-                <button onClick={() => { s.openReport(h); router.push("/report"); }}>
-                  打开报告 <Ico name="arrow" size={15} />
-                </button>
-                <button aria-label="删除" onClick={() => setDeleteId(h.id)}>
-                  <Ico name="trash" size={15} />
-                </button>
-              </div>
-              {deleteId === h.id && (
-                <div className="notice" style={{ marginTop: 12 }}>
-                  <div>
-                    <b>删除后无法恢复</b>
-                    <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-                      <button className="button small outline" onClick={() => setDeleteId(null)}>取消</button>
-                      <button className="button small" onClick={() => { s.removeReport(h.id); setDeleteId(null); }}>确认删除</button>
+        <>
+          <div className="project-list">
+            {s.history.map((h) => (
+              <div className="card project-card" key={h.id}>
+                <div>
+                  <span className={`tag ${h.mode === "demo" ? "pink" : ""}`}>
+                    {h.mode === "demo" ? "示例" : "AI 分析"}
+                  </span>
+                  <small>{new Date(h.createdAt).toLocaleDateString("zh-CN")}</small>
+                </div>
+                <h2>{h.decision.title}</h2>
+                {(() => {
+                  const recId = "recommendedOptionId" in h.report ? h.report.recommendedOptionId : null;
+                  if (!recId) return null;
+                  const optName = h.decision.options.find((o) => o.id === recId)?.name ?? "—";
+                  return <p className="history-rec">💡 推荐：{optName}</p>;
+                })()}
+                <div>
+                  <button onClick={() => { s.openReport(h); router.push("/report"); }}>
+                    打开报告 <Ico name="arrow" size={15} />
+                  </button>
+                  <button aria-label="删除" onClick={() => setDeleteId(h.id)}>
+                    <Ico name="trash" size={15} />
+                  </button>
+                </div>
+                {deleteId === h.id && (
+                  <div className="notice" style={{ marginTop: 12 }}>
+                    <div>
+                      <b>删除后无法恢复</b>
+                      <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                        <button className="button small outline" onClick={() => setDeleteId(null)}>取消</button>
+                        <button className="button small" onClick={() => { s.removeReport(h.id); setDeleteId(null); }}>确认删除</button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-center mt-8 pb-16">
+            <Link href="/" className="btn-pop inline-flex items-center gap-2 px-6 py-3 text-ink-700 whitespace-nowrap">
+              <Ico name="home" size={16} /> 返回首页
+            </Link>
+          </div>
+        </>
       )}
     </Shell>
   );
